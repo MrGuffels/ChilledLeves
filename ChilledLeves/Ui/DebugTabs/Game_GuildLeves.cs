@@ -3,10 +3,12 @@ using ChilledLeves.Scheduler.Handlers;
 using ChilledLeves.Utilities;
 using ChilledLeves.Utilities.LeveData;
 using ChilledLeves.Utilities.LogInfo;
+using ECommons.ExcelServices;
 using ECommons.GameHelpers;
 using ECommons.Logging;
 using ECommons.Throttlers;
 using FFXIVClientStructs.FFXIV.Client.UI;
+using FFXIVClientStructs.FFXIV.Component.GUI;
 using System.Collections.Generic;
 
 namespace ChilledLeves.Ui.DebugTabs
@@ -125,7 +127,7 @@ namespace ChilledLeves.Ui.DebugTabs
             {
                 if (LeveInfo.Leve_SheetInfo.TryGetValue(leve, out var sheetInfo))
                 {
-                    if (sheetInfo.Npc_Vendor != currentNpcId)
+                    if (sheetInfo.Npc_Vendors.First() == currentNpcId)
                     {
                         IceLogging.Verbose($"Leve: {leve} | Not the same npc", tag);
                         continue;

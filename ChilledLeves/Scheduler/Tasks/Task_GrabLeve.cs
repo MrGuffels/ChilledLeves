@@ -7,6 +7,7 @@ using Dalamud.Game.ClientState.Conditions;
 using ECommons.GameHelpers;
 using ECommons.Throttlers;
 using ECommons.UIHelpers.AddonMasterImplementations;
+using SharpDX.DirectWrite;
 using System.Collections.Generic;
 using static ECommons.UIHelpers.AddonMasterImplementations.AddonMaster;
 
@@ -20,12 +21,14 @@ namespace ChilledLeves.Scheduler.Tasks
 
             if (LeveInfo.Leve_SheetInfo.TryGetValue(Leve_Helper.LeveToGrab, out var sheetInfo))
             {
-                if (LeveInfo.LeveNpc_Info.TryGetValue(sheetInfo.Npc_Vendor, out var vendorInfo))
+                var firstVendor = sheetInfo.Npc_Vendors.First();
+
+                if (LeveInfo.Levemete_Info.TryGetValue(firstVendor, out var vendorInfo))
                 {
                     P.taskManager.EnqueueMulti
                     (
                         new(() => Task_Travel.AethernetTask_Grab(vendorInfo), "Traveling to vendor NPC"),
-                        new(() => OpenLeveWindow(vendorInfo, sheetInfo.Npc_Vendor), "Opening Leve Menu"),
+                        new(() => OpenLeveWindow(vendorInfo, firstVendor), "Opening Leve Menu"),
                         new(() => GrabLeve(), "Grabbing the leve from the vendor"),
                         new(() => CheckOtherLeves(), "Checking for multi leve grab"),
                         new(() => LeaveVendor(), "Leaving the leve Vendor")
@@ -33,7 +36,7 @@ namespace ChilledLeves.Scheduler.Tasks
                 }
                 else
                 {
-                    IceLogging.Error($"Missing NPC info on the following leve: {Leve_Helper.LeveToGrab}. Gave Id: {sheetInfo.Npc_Vendor}", tag);
+                    IceLogging.Error($"Missing NPC info on the following leve: {Leve_Helper.LeveToGrab}. Gave Id: {sheetInfo.Npc_Vendors.First()}", tag);
                     Leve_Helper.State = LeveState.Idle;
                 }
             }
@@ -44,9 +47,32 @@ namespace ChilledLeves.Scheduler.Tasks
             }
         }
 
+        public static void Enqueue_ARR()
+        {
+            string tag = "Task: Grab ARR Leve";
+            var arrVendor = C.ARR_NpcId;
+
+
+            if (LeveInfo.Levemete_Info.TryGetValue(arrVendor, out var vendorInfo))
+            {
+                P.taskManager.EnqueueMulti
+                (
+                    new(() => Task_Travel.AethernetTask_Grab(vendorInfo), "Traveling to vendor NPC"),
+                    new(() => OpenLeveWindow(vendorInfo, arrVendor), "Opening Leve Menu"),
+                    new(() => GrabLeve(), "Grabbing the leve from the vendor"),
+                    new(() => LeaveVendor(), "Leaving the leve Vendor")
+                );
+            }
+            else
+            {
+                IceLogging.Error($"Missing NPC info on the following leve: {Leve_Helper.LeveToGrab}. Gave Id: {arrVendor}", tag);
+                Leve_Helper.State = LeveState.Idle;
+            }
+        }
+
         private static int talkCooldown = 0;
 
-        private static bool OpenLeveWindow(LeveInfo.VendorInfo npcInfo, uint npcId)
+        private static bool OpenLeveWindow(LeveInfo.Info_Vendor npcInfo, uint npcId)
         {
             string tag = "Open Leve Window";
 
@@ -97,6 +123,7 @@ namespace ChilledLeves.Scheduler.Tasks
         public static void SelectLeveKind(SelectString addon)
         {
             string tag = "Select Leve: Addon";
+
             if (LeveInfo.Leve_SheetInfo.TryGetValue(Leve_Helper.LeveToGrab, out var sheetInfo))
             {
                 var kind = sheetInfo.LeveType;
@@ -171,6 +198,70 @@ namespace ChilledLeves.Scheduler.Tasks
                     return false;
                 }
 
+                if (LeveInfo.LoadedList().Contains(Leve_Helper.LeveToGrab))
+                {
+                    if (EzThrottler.Throttle("Selecting leve", 1000))
+                    {
+                        IceLogging.Verbose($"Selecting leve: {Leve_Helper.LeveToGrab}", tag);
+                        guildLeve.SelectProperLeve(guildLeve, Leve_Helper.LeveToGrab);
+                    }
+                }
+            }
+
+            return false;
+        }
+        private static List<uint> ValidARRLeves = new();
+        private static bool UpdateARRLeves()
+        {
+            ValidARRLeves = new();
+            var list = C.Npc_LevePriority[C.ARR_NpcId];
+            foreach (var leve in list)
+            {
+                ValidARRLeves.Add(leve);
+            }
+
+            return true;
+        }
+
+        public static bool Grab_ARRLeve()
+        {
+            string tag = "Task: Grab Leve";
+
+            bool anyAccepted = ValidARRLeves.Where(x => Utils.Leve_IsAccepted(x)).Any();
+
+            if (anyAccepted)
+            {
+                IceLogging.Debug("We've accepted the leve for multi mode, continuing to do said leve", tag);
+                return true;
+            }
+
+            if (GenericHelpers.TryGetAddonMaster<GuildLeve>(out var guildLeve) && guildLeve.IsAddonReady)
+            {
+                foreach (var leve in ValidARRLeves)
+                {
+
+                }
+
+                if (Leve_Helper.LeveToGrab == guildLeve.SelectedLeveId)
+                {
+                    if (EzThrottler.Throttle("Accepting Leve", 1000))
+                        GenericHandlers.FireCallback("JournalDetail", true, 3, (int)Leve_Helper.LeveToGrab);
+
+                    return false;
+                }
+
+                var goalLeve = LeveInfo.Leve_SheetInfo[Leve_Helper.LeveToGrab];
+                var goalJob = goalLeve.Job;
+
+                if (EzThrottler.Throttle("Current Status of Primary Leve", 1000))
+                    IceLogging.Verbose($"Currently attempting to grab leve. Goal Leve: {Leve_Helper.LeveToGrab} | Job: {goalJob}", tag);
+
+                if (!guildLeve.SelectJob(goalJob))
+                {
+                    IceLogging.Verbose("We're on the wrong job tab, so going to fix that", tag);
+                    return false;
+                }
+
                 foreach (var leve in guildLeve.Levequests)
                 {
                     var selectedLeve = LeveInfo.Leve_SheetInfo.Where(x => x.Value.LeveName == leve.Name).FirstOrNull();
@@ -207,7 +298,7 @@ namespace ChilledLeves.Scheduler.Tasks
 
             var lastLeveInfo = LeveInfo.Leve_SheetInfo[Leve_Helper.LeveToGrab];
 
-            var currentNpcId = lastLeveInfo.Npc_Vendor;
+            var currentNpcId = lastLeveInfo.Npc_Vendors.First();
             var leveList = C.LeveOrder;
 
             ValidLeves = null;
@@ -219,7 +310,7 @@ namespace ChilledLeves.Scheduler.Tasks
             {
                 if (LeveInfo.Leve_SheetInfo.TryGetValue(leve, out var sheetInfo))
                 {
-                    if (sheetInfo.Npc_Vendor != currentNpcId)
+                    if (sheetInfo.Npc_Vendors.First() != currentNpcId)
                     {
                         IceLogging.Verbose($"Leve: {leve} | Not the same npc", tag);
                         continue;
@@ -278,25 +369,12 @@ namespace ChilledLeves.Scheduler.Tasks
                             return false;
                         }
 
-                        foreach (var leve in guildLeve.Levequests)
+                        if (LeveInfo.LoadedList().Contains(multiLeve))
                         {
-                            var selectedLeve = LeveInfo.Leve_SheetInfo.Where(x => x.Value.LeveName == leve.Name).FirstOrNull();
-
-                            if (selectedLeve != null)
+                            if (EzThrottler.Throttle("Selecting leve", 1000))
                             {
-                                var selectedJob = selectedLeve.Value.Value.Job;
-                                var goalName = goalLeve.LeveName;
-
-                                if (leve.Name == goalName)
-                                {
-                                    if (EzThrottler.Throttle("Leve_CorrectJob", 1000))
-                                    {
-                                        IceLogging.Verbose($"Selecting leve: {leve.Name}", tag);
-                                        leve.Select();
-                                    }
-
-                                    break;
-                                }
+                                IceLogging.Verbose($"Selecting leve: {multiLeve}", tag);
+                                guildLeve.SelectProperLeve(guildLeve, multiLeve);
                             }
                         }
                     }

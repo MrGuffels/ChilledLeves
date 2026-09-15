@@ -2,12 +2,16 @@
 
 public enum WindowSelection
 {
-    LeveInfo = 1 << 0,
-    LeveManifest = 1 << 1,
-    ARR_Grind = 1 << 2,
-    GatherProfiles = 1 << 3,
-    Logs = 1 << 4,
-    UserInfo = 1 << 5,
-    Settings = 1 << 6,
-    Debug = 1 << 10,
+    LeveInfo = 0,
+    LeveManifest = 1,
+    ARR_Grind = 2,
+    GatherProfiles = 3,
+    Logs = 4,
+    UserInfo = 5,
+    Settings = 6,
+    NpcInfo = 7,
+    RouteEditor = 8,
+    SavedList = 9,
+
+    Debug = 100,
 }

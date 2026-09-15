@@ -879,6 +879,75 @@ public static partial class Utils
             MoveTo = new(38.60f, 20.30f, -675.33f),
         },
 
+        #region Fringes
+
+        [98] = new()
+        {
+            ShardId = 98,
+            TerritoryId = 612,
+            ValidTerritories = new() { 612 },
+            Position = new(-629.11f, 132.89f, -509.15f),
+            MoveTo = new(-634.27f, 130.07f, -510.34f),
+        },
+
+        [99] = new()
+        {
+            ShardId = 99,
+            TerritoryId = 612,
+            ValidTerritories = new() { 612 },
+            Position = new(415.30f, 117.36f, 246.75f),
+            MoveTo = new(421.40f, 114.27f, 248.83f),
+        },
+
+
+        #endregion
+
+        #region Ruby Sea
+
+        [106] = new()
+        {
+            ShardId = 106,
+            TerritoryId = 613,
+            ValidTerritories = new() { 613 },
+            Position = new(88.18f, 4.14f, -583.37f),
+            MoveTo = new(85.84f, 3.03f, -578.78f),
+        },
+
+        [105] = new()
+        {
+            ShardId = 105,
+            TerritoryId = 613,
+            ValidTerritories = new() { 613 },
+            Position = new(358.72f, -118.06f, -263.42f),
+            MoveTo = new(357.63f, -118.53f, -254.60f),
+        },
+
+
+        #endregion
+
+        #region Yanxia
+
+        [107] = new()
+        {
+            ShardId = 107,
+            TerritoryId = 614,
+            ValidTerritories = new() { 614 },
+            Position = new(432.67f, 73.08f, -90.75f),
+            MoveTo = new(438.14f, 68.75f, -91.46f),
+        },
+
+        [108] = new()
+        {
+            ShardId = 108,
+            TerritoryId = 614,
+            ValidTerritories = new() { 614 },
+            Position = new(246.02f, 9.08f, -401.36f),
+            MoveTo = new(247.28f, 5.01f, -395.42f),
+        },
+
+
+        #endregion
+
         #region The Peaks
 
         [101] = new()

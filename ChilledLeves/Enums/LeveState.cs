@@ -20,4 +20,11 @@
         Standard,
         ARR_Grind,
     }
+
+    public enum StopConditions
+    {
+        Level,
+        Complete,
+        NoAllowance,
+    }
 }

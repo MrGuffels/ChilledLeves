@@ -1,6 +1,8 @@
-﻿using Dalamud.Memory;
+﻿using ChilledLeves.Utilities.LogInfo;
+using Dalamud.Memory;
 using ECommons.ExcelServices;
 using ECommons.Logging;
+using ECommons.Throttlers;
 using ECommons.UIHelpers.AddonMasterImplementations;
 using FFXIVClientStructs.FFXIV.Client.UI;
 using FFXIVClientStructs.FFXIV.Component.GUI;
@@ -41,39 +43,78 @@ public unsafe class GuildLeve : AddonMasterBase<AddonGuildLeve>
     public AtkComponentRadioButton* TradeCraftButton => Addon->GetComponentNodeById(13)->GetAsAtkComponentRadioButton();
     public bool SelectJob(Job job)
     {
+        if ((uint)job >= 19)
+            throw new ArgumentOutOfRangeException(nameof(job));
+
         var isCrafter = (uint)job < 16;
         var targetCategoryButton = isCrafter ? TradeCraftButton : FieldCraftButton;
-        var otherCategoryButton = isCrafter ? FieldCraftButton : TradeCraftButton;
 
-        // If we're not currently on the right category tab, switch first.
-        if (!IsCategoryActive(targetCategoryButton) && IsCategoryActive(otherCategoryButton))
+        var jobButtonNodeId = isCrafter ? (uint)job + 7 : (uint)job - 1;
+        var jobButton = Addon->GetComponentNodeById(jobButtonNodeId)->GetAsAtkComponentRadioButton();
+        bool isActive = IsCategoryActive(jobButton);
+
+        if (!isActive)
         {
-            ClickButtonIfEnabled(targetCategoryButton);
+            if (IsCategoryActive(targetCategoryButton))
+            {
+                if (EzThrottler.Throttle("Correct category", 2000))
+                    IceLogging.Verbose($"We're in the right category for: {job}, setting the button now", "Select job");
+
+                ClickButtonIfEnabled(jobButton);
+                jobButton->SetActive();
+
+                if (EzThrottler.Throttle("Correct Job Log", 2000))
+                    IceLogging.Verbose($"State of the job button: {isActive}", "Select job");
+            }
+            else
+            {
+                if (EzThrottler.Throttle("Setting Correct Category", 2000))
+                    IceLogging.Verbose($"Category button still needs to be selected for: {job}", "Select job");
+                ClickButtonIfEnabled(targetCategoryButton);
+                targetCategoryButton->SetActive();
+            }
+
             return false;
-        }
-
-        if (isCrafter)
-        {
-            ClickButtonIfEnabled(Addon->GetComponentNodeById((uint)job + 7)->GetAsAtkComponentRadioButton());
-            return true;
-        }
-        else if ((uint)job < 19)
-        {
-            ClickButtonIfEnabled(Addon->GetComponentNodeById((uint)job - 1)->GetAsAtkComponentRadioButton());
-            return true;
         }
         else
         {
-            throw new ArgumentOutOfRangeException(nameof(job));
+            return true;
         }
     }
-
     private static bool IsCategoryActive(AtkComponentRadioButton* button)
     {
         if (button == null) return false;
-        return button->IsEnabled && button->AtkResNode->IsVisible();
+        return button->IsSelected;
     }
+    public Job? CurrentJob
+    {
+        get
+        {
+            var isCrafter = IsCategoryActive(TradeCraftButton);
+            var isGatherer = IsCategoryActive(FieldCraftButton);
 
+            if (isCrafter)
+            {
+                for (var job = 0u; job < 8; job++)
+                {
+                    var button = Addon->GetComponentNodeById(job + 15)->GetAsAtkComponentRadioButton();
+                    if (button->IsSelected)
+                        return (Job)job + 8;
+                }
+            }
+            else if (isGatherer)
+            {
+                for (var job = 16u; job < 19; job++)
+                {
+                    var button = Addon->GetComponentNodeById(job - 1)->GetAsAtkComponentRadioButton();
+                    if (button->IsSelected)
+                        return (Job)job;
+                }
+            }
+
+            return null;
+        }
+    }
     public Levequest[] Levequests
     {
         get
@@ -128,5 +169,9 @@ public unsafe class GuildLeve : AddonMasterBase<AddonGuildLeve>
     public void Close(GuildLeve master)
     {
         Callback.Fire(master.Base, true, -1);
+    }
+    public void SelectProperLeve(GuildLeve master, uint leveId)
+    {
+        Callback.Fire(master.Base, true, 13, 0, leveId);
     }
 }

@@ -26,7 +26,7 @@ namespace ChilledLeves.Scheduler.Tasks
         /// Aethernet / Direct travel for the same city. Teleport task is done before this (keeps it clean..)
         /// </summary>
         /// <param name="vendorInfo"></param>
-        public static void QueueCityAethernet(LeveInfo.VendorInfo vendorInfo)
+        public static void QueueCityAethernet(LeveInfo.Info_Vendor vendorInfo)
         {
             P.navTask.EnqueueMulti
             (
@@ -41,7 +41,7 @@ namespace ChilledLeves.Scheduler.Tasks
         /// Used post city teleport, or in the case we're in a multi-city and need to get to the proper side...
         /// </summary>
         /// <param name="vendorInfo"></param>
-        public static void Queue_TeleportAethernet(LeveInfo.VendorInfo vendorInfo)
+        public static void Queue_TeleportAethernet(LeveInfo.Info_Vendor vendorInfo)
         {
             P.navTask.EnqueueMulti
                 (
@@ -51,7 +51,7 @@ namespace ChilledLeves.Scheduler.Tasks
                 );
         }
 
-        public static bool Queue_WorldVendorTravel(LeveInfo.VendorInfo vendorInfo)
+        public static bool Queue_WorldVendorTravel(LeveInfo.Info_Vendor vendorInfo)
         {
             var position = vendorInfo.Npc_InteractZone;
             bool shouldFly = Player.DistanceTo(position) > C.Fly_MinDistance && Utils.CanFly() && C.OptionalFly;
@@ -238,7 +238,7 @@ namespace ChilledLeves.Scheduler.Tasks
 
         #region Pathfinding Task(s)
 
-        public static bool TeleportCheck(VendorInfo vendorInfo)
+        public static bool TeleportCheck(Info_Vendor vendorInfo)
         {
             const string tag = "Navmesh: Teleport";
 
@@ -321,7 +321,7 @@ namespace ChilledLeves.Scheduler.Tasks
         /// </summary>
         /// <param name="vendorInfo"></param>
         /// <returns></returns>
-        private static bool City_CalculateDirect(LeveInfo.VendorInfo vendorInfo)
+        private static bool City_CalculateDirect(LeveInfo.Info_Vendor vendorInfo)
         {
             const string tag = "Navmesh: Calculate Direct";
             var playerPosition = Player.Position;
@@ -364,7 +364,7 @@ namespace ChilledLeves.Scheduler.Tasks
         /// </summary>
         /// <param name="vendorInfo"></param>
         /// <returns></returns>
-        private static bool City_CalculateAethernet(LeveInfo.VendorInfo vendorInfo)
+        private static bool City_CalculateAethernet(LeveInfo.Info_Vendor vendorInfo)
         {
             const string tag = "Navmesh: Aethernet Calculation";
             Vector3 destination = vendorInfo.Npc_InteractZone;
@@ -617,7 +617,7 @@ namespace ChilledLeves.Scheduler.Tasks
 
             return false; // Keep checking, more candidates (or the final pick) to go
         }
-        private static bool City_BestTravel(VendorInfo vendorInfo)
+        private static bool City_BestTravel(Info_Vendor vendorInfo)
         {
             const string tag = "Navmesh: City Best Travel";
 
@@ -690,7 +690,7 @@ namespace ChilledLeves.Scheduler.Tasks
 
             return false;
         }
-        private static unsafe bool UseAethernet(uint aetherShard, VendorInfo vendorInfo)
+        private static unsafe bool UseAethernet(uint aetherShard, Info_Vendor vendorInfo)
         {
             const string tag = "Navmesh: Using Aethernet";
 
@@ -866,7 +866,7 @@ namespace ChilledLeves.Scheduler.Tasks
         public static bool Task_GroundTo(Vector3 pos, bool waitForBusy = true, float distance = 2.0f, bool stayMounted = false)
         {
             const string tag = "Navmesh: Ground -> Destination";
-            Vector2 v2Pos = new(pos.X, pos.Z); 
+            Vector2 v2Pos = new(pos.X, pos.Z);
 
             var currentDistance = Player.DistanceTo(v2Pos);
 
@@ -1160,7 +1160,6 @@ namespace ChilledLeves.Scheduler.Tasks
 
             return angle;
         }
-
         private static float NormalizeAngle(float angle)
         {
             angle = angle % 360f;
@@ -1168,7 +1167,6 @@ namespace ChilledLeves.Scheduler.Tasks
                 angle += 360f;
             return angle;
         }
-
         private static float GetRangeSpan(float min, float max)
         {
             float diff = MathF.Abs(max - min);
@@ -1291,7 +1289,7 @@ namespace ChilledLeves.Scheduler.Tasks
 
             return new Vector3(
                 center.X + distance * MathF.Sin(angleRadians),
-                center.Y,
+                center.Y + height,   // now actually applies the fan's height offset
                 center.Z + distance * MathF.Cos(angleRadians)
             );
         }

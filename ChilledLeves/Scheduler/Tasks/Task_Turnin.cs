@@ -21,7 +21,7 @@ namespace ChilledLeves.Scheduler.Tasks
 
             if (LeveInfo.Leve_SheetInfo.TryGetValue(Leve_Helper.LeveToGrab, out var sheetInfo))
             {
-                if (LeveInfo.LeveNpc_Info.TryGetValue(sheetInfo.Npc_Turnin, out var vendorInfo))
+                if (LeveInfo.Levemete_Info.TryGetValue(sheetInfo.Npc_Turnin, out var vendorInfo))
                 {
                     P.taskManager.EnqueueMulti
                     (
@@ -31,7 +31,7 @@ namespace ChilledLeves.Scheduler.Tasks
                 }
                 else
                 {
-                    IceLogging.Error($"Missing NPC info on the following leve: {Leve_Helper.LeveToGrab}. Gave Id: {sheetInfo.Npc_Vendor}", tag);
+                    IceLogging.Error($"Missing NPC info on the following leve: {Leve_Helper.LeveToGrab}. Gave Id: {sheetInfo.Npc_Turnin}", tag);
                     Leve_Helper.State = LeveState.Idle;
                 }
             }
@@ -42,7 +42,7 @@ namespace ChilledLeves.Scheduler.Tasks
             }
         } 
 
-        private static bool TryTurnin(LeveInfo.VendorInfo vendorInfo, LeveInfo.Leve_SheetData sheetInfo)
+        private static bool TryTurnin(LeveInfo.Info_Vendor vendorInfo, LeveInfo.Info_LeveSheetData sheetInfo)
         {
             const string tag = "Turnin: Trying Turnin";
             var leveId = Leve_Helper.LeveToGrab;

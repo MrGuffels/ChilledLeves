@@ -50,7 +50,7 @@ namespace ChilledLeves.Ui.DebugTabs
                     ImGui.TableSetupColumn("Name");
                     ImGui.TableSetupColumn("Location");
 
-                    foreach (var entry in LeveInfo.LeveNpc_Info.OrderBy(x => x.Value.TerritoryId))
+                    foreach (var entry in LeveInfo.Levemete_Info.OrderBy(x => x.Value.TerritoryId))
                     {
                         if (!Utils.ContainsIgnoreSpacesAndCase(entry.Value.Name, _nameSearch))
                             continue;

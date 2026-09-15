@@ -1,5 +1,6 @@
 ﻿using ChilledLeves.Enums;
 using ChilledLeves.Gui;
+using ChilledLeves.Ui.DebugTabs;
 using ChilledLeves.Ui.MainWindow_Tabs;
 using ChilledLeves.Ui.MainWindow_Tabs.Settings_Info;
 using ChilledLeves.Utilities;
@@ -75,11 +76,17 @@ namespace ChilledLeves.Ui
                 Label = "Leve Playlist",
                 Draw = () => Leve_Playlist.Draw(),
             },
+            [WindowSelection.SavedList] = new()
+            {
+                Icon = FontAwesomeIcon.Save,
+                Label = "Saved Playlist",
+                Draw = () => Leve_List.Draw()
+            },
             [WindowSelection.ARR_Grind] = new()
             {
                 Icon = FontAwesomeIcon.PersonThroughWindow,
                 Label = "ARR Grind",
-                Draw = () => { }
+                Draw = () => Leve_ARRGrind.Draw(),
             },
             [WindowSelection.UserInfo] = new()
             {
@@ -99,17 +106,29 @@ namespace ChilledLeves.Ui
                 Label = "Gather Profiles",
                 Draw = () => Gathering_Profiles.Draw()
             },
+            [WindowSelection.NpcInfo] = new()
+            {
+                Icon = FontAwesomeIcon.PersonWalkingLuggage,
+                Label = "Levemetes",
+                Draw = () => Levemetes_Info.Draw()
+            },
             [WindowSelection.Logs] = new()
             {
                 Icon = FontAwesomeIcon.Clipboard,
                 Label = "Logs",
                 Draw = () => User_Logs.Draw(),
             },
+            [WindowSelection.RouteEditor] = new()
+            {
+                Icon = FontAwesomeIcon.Route,
+                Label = "Route Editor",
+                Draw = () => Route_Editor.Draw(),
+            },
             [WindowSelection.Debug] = new()
             {
                 Icon = FontAwesomeIcon.Qrcode,
                 Label = "Debug",
-                Draw = () => { }
+                Draw = () => Ui_LeveInfo.Draw()
             },
         };
 

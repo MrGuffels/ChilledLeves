@@ -209,7 +209,7 @@ namespace ChilledLeves.Scheduler.Tasks
 
         public static List<uint> CheckedNodes = new();
 
-        private static bool CheckRules(LeveInfo.Leve_SheetData leveInfo, GatheringRoute routeInfo)
+        private static bool CheckRules(LeveInfo.Info_LeveSheetData leveInfo, GatheringRoute routeInfo)
         {
             string tag = "Gathering: Checking Rules";
 
@@ -233,7 +233,7 @@ namespace ChilledLeves.Scheduler.Tasks
 
             return true;
         }
-        private static bool FindNode(LeveInfo.Leve_SheetData leveInfo, GatheringRoute routeInfo)
+        private static bool FindNode(LeveInfo.Info_LeveSheetData leveInfo, GatheringRoute routeInfo)
         {
             string tag = "Gathering: Finding Node";
 
@@ -247,7 +247,7 @@ namespace ChilledLeves.Scheduler.Tasks
             else if (!navTask.IsBusy)
             {
                 var nodeClosest = routeInfo.NodeInfo
-                    .Where(x => Player.DistanceTo(x.Position) < 3.7f)
+                    .Where(x => Player.DistanceTo(x.Position) < 3.4f)
                     .Where(x => IsTargetable(x))
                     .FirstOrDefault();
 
@@ -329,7 +329,7 @@ namespace ChilledLeves.Scheduler.Tasks
 
             return false;
         }
-        private static void UpdateNodeList(LeveInfo.Leve_SheetData leveInfo, GatheringRoute routeInfo)
+        private static void UpdateNodeList(LeveInfo.Info_LeveSheetData leveInfo, GatheringRoute routeInfo)
         {
             if (leveInfo.GatheringRule is GatheringRule.Procurance)
                 return;

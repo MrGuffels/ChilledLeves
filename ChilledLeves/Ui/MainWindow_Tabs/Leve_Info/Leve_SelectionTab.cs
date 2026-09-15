@@ -15,9 +15,10 @@ namespace ChilledLeves.Ui.MainWindow_Tabs.Leve_Info
         public static void Draw()
         {
             var sortedLeves = LeveInfo.Leve_SheetInfo
-                                .OrderBy(x => x.Value.Job)
-                                .ThenBy(x => x.Key)
-                                .ToList();
+                .Where(x => LeveInfo.Assignment_IconDict.ContainsKey(x.Value.JobAssignmentType))
+                .OrderBy(x => x.Value.Job)
+                .ThenBy(x => x.Key)
+                .ToList();
             LeveCount = 0;
             Leve_Total = sortedLeves.Count();
 
@@ -79,7 +80,7 @@ namespace ChilledLeves.Ui.MainWindow_Tabs.Leve_Info
 
                     // JobIcon
                     ImGui.TableNextColumn();
-                    GameIcons.DrawInlineOrIcon(LeveInfo.Job_IconDict[leveId.Value.Job].IconId, FontAwesomeIcon.Book);
+                    GameIcons.DrawInlineOrIcon(LeveInfo.Assignment_IconDict[leveId.Value.JobAssignmentType].IconId, FontAwesomeIcon.Book);
 
                     // Favorite icon
                     ImGui.TableNextColumn();
@@ -116,7 +117,7 @@ namespace ChilledLeves.Ui.MainWindow_Tabs.Leve_Info
                 }
 
                 // Make sure that it's enabled
-                showLeve &= C.Job_LeveFilter[leve.Job];
+                showLeve &= C.Assignemnt_Filter.TryGetValue(leve.JobAssignmentType, out var jobEnabled) && jobEnabled;
 
                 if (C.Leve_Filter["Completed"])
                     showLeve &= Utils.Leve_IsComplete(leveId);

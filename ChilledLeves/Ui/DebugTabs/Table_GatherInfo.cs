@@ -28,7 +28,7 @@ namespace ChilledLeves.Ui.DebugTabs
                     ImGui.Text($"{leve.Key}");
 
                     ImGui.TableNextColumn();
-                    var image = LeveInfo.Job_IconDict[leve.Value.Job].ColorIcon;
+                    var image = LeveInfo.Assignment_IconDict[leve.Value.JobAssignmentType].ColorIcon;
                     ImGui.Image(image.GetWrapOrEmpty().Handle, new Vector2(24, 24));
 
                     ImGui.TableNextColumn();

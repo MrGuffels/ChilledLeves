@@ -2,7 +2,7 @@
 <Project Sdk="Dalamud.NET.Sdk/14.0">
 
   <PropertyGroup>
-    <Version>1.0.1.26</Version>
+    <Version>1.0.1.27</Version>
     <Description>Bringing in automating the leve process, one leve at a time.</Description>
     <PackageProjectUrl>https://github.com/goatcorp/ChilledLeves</PackageProjectUrl>
     <PackageLicenseExpression>AGPL-3.0-or-later</PackageLicenseExpression>
@@ -17,17 +17,6 @@
     <EmbeddedResource Include="images\icon.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </EmbeddedResource>
-    <EmbeddedResource Include="Resources\GreyscaleJobs\ALC.png" />
-    <EmbeddedResource Include="Resources\GreyscaleJobs\ARM.png" />
-    <EmbeddedResource Include="Resources\GreyscaleJobs\BSM.png" />
-    <EmbeddedResource Include="Resources\GreyscaleJobs\BTN.png" />
-    <EmbeddedResource Include="Resources\GreyscaleJobs\CRP.png" />
-    <EmbeddedResource Include="Resources\GreyscaleJobs\CUL.png" />
-    <EmbeddedResource Include="Resources\GreyscaleJobs\FSH.png" />
-    <EmbeddedResource Include="Resources\GreyscaleJobs\GSM.png" />
-    <EmbeddedResource Include="Resources\GreyscaleJobs\LTW.png" />
-    <EmbeddedResource Include="Resources\GreyscaleJobs\MIN.png" />
-    <EmbeddedResource Include="Resources\GreyscaleJobs\WVR.png" />
   </ItemGroup>
 	
   <ItemGroup>

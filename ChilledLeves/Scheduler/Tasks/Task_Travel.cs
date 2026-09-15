@@ -9,7 +9,7 @@ namespace ChilledLeves.Scheduler.Tasks
 {
     internal class Task_Travel
     {
-        public static bool AethernetTask_Grab(LeveInfo.VendorInfo vendorInfo)
+        public static bool AethernetTask_Grab(LeveInfo.Info_Vendor vendorInfo)
         {
             const string tag = "Travel: Navmesh Check";
 
@@ -45,7 +45,7 @@ namespace ChilledLeves.Scheduler.Tasks
             return false;
         }
 
-        public static bool AethernetTask_Turnin(LeveInfo.VendorInfo vendorInfo)
+        public static bool AethernetTask_Turnin(LeveInfo.Info_Vendor vendorInfo)
         {
             const string tag = "Travel: Navmesh Check";
 

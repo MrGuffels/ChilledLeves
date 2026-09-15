@@ -1,100 +1,75 @@
 ﻿using ChilledLeves.Enums;
 using Dalamud.Interface.Textures;
-using Dalamud.Interface.Textures.TextureWraps;
 using ECommons.ExcelServices;
-using ECommons.Logging;
-using FFXIVClientStructs.FFXIV.Client.Game.UI;
 using Lumina.Excel.Sheets;
-using System;
 using System.Collections.Generic;
-using System.Reflection;
-using System.Text;
 
 namespace ChilledLeves.Utilities.LeveData;
 
 public static partial class LeveInfo
 {
-    private static HashSet<uint> Assigned_LeveJobs = new() { 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12 };
-    private static HashSet<uint> Material_LeveJobs = new() { 4, 5, 6, 7, 8, 9, 10, 11, 12 };
-    private static HashSet<uint> Gathering_LeveJobs = new() { 2, 3};
+    private static HashSet<AssignmentType> Assignment_Crafters = new()
+    { 
+        AssignmentType.Carpenter, AssignmentType.Blacksmith, 
+        AssignmentType.Armorer, AssignmentType.Goldsmith, 
+        AssignmentType.Leatherworker, AssignmentType.Weaver, 
+        AssignmentType.Alchemist, AssignmentType.Culinarian, 
+        AssignmentType.Fisher 
+    };
+    private static HashSet<AssignmentType> Assignment_Gathering = new() { AssignmentType.Miner, AssignmentType.Botanist};
+    private static HashSet<AssignmentType> Assignment_Battle = new() { AssignmentType.Battlecraft, AssignmentType.Maelstorm, AssignmentType.TwinAdder, AssignmentType.ImmortalFlames };
 
     public static readonly List<Job> LeveJobs_Material = new() { Job.CRP, Job.BSM, Job.ARM, Job.GSM, Job.WVR, Job.LTW, Job.ALC, Job.CUL, Job.FSH };
     public static readonly List<Job> LeveJobs_Gathering = new() { Job.MIN, Job.BTN };
 
-    public static Dictionary<Leve_Status, uint> LeveStatus = new()
+    public static Dictionary<Leve_Status, uint> Leve_State = new()
     {
         [Leve_Status.NotGrabbed] = 71041,
         [Leve_Status.NotComplete] = 71045,
         [Leve_Status.Complete] = 71055,
     };
 
-    // public static HashSet<int> LeveStatus = new() { 71041, 71045, 71055 };
-
-    public class Class_IconInfo
+    public class Info_Assignment
     {
         public ISharedImmediateTexture ColorIcon { get; set; } = null;
         public uint IconId { get; set; } = 0;
+        public string Name { get; set; } = "???";
     }
 
-    public static Dictionary<Job, Class_IconInfo> Job_IconDict = new()
-    {
-        [Job.CRP] = new(),
-        [Job.BSM] = new(),
-        [Job.ARM] = new(),
-        [Job.GSM] = new(),
-        [Job.LTW] = new(),
-        [Job.WVR] = new(),
-        [Job.ALC] = new(),
-        [Job.CUL] = new(),
-        [Job.MIN] = new(),
-        [Job.BTN] = new(),
-        [Job.FSH] = new(),
-    };
+    public static Dictionary<AssignmentType, Info_Assignment> Assignment_IconDict = new();
 
     public static void UpdateJobIcons()
     {
         var LeveAssignmentSheet = Svc.Data.GetExcelSheet<LeveAssignmentType>();
-        for (uint i = 5; i < 13; i++)
+        for (uint i = 1; i < 16; i++)
         {
-            Job jobId = (Job)i+3;
-            var iconId = LeveAssignmentSheet.GetRow(i).Icon;
+            AssignmentType type = (AssignmentType)i;
+            var row = LeveAssignmentSheet.GetRow(i);
+            var iconId = row.Icon;
+            var name = row.Name.ToString();
+
             if (Svc.Texture.TryGetFromGameIcon(iconId, out var iconTexture))
             {
-                Job_IconDict[jobId].IconId = (uint)iconId;
-                Job_IconDict[jobId].ColorIcon = iconTexture;
+                Assignment_IconDict[type] = new()
+                {
+                    Name = name,
+                    IconId = (uint)iconId,
+                    ColorIcon = iconTexture
+                };
             }
         }
 
-        for (uint i = 2; i < 5; i++)
+        // for specifically the "all" category. Just that way I have it
+        int allIcon = 71061;
+
+        if (Svc.Texture.TryGetFromGameIcon(allIcon, out var allTexture))
         {
-            Job jobId = (Job)i+14;
-            var iconId = LeveAssignmentSheet.GetRow(i).Icon;
-            if (Svc.Texture.TryGetFromGameIcon(iconId, out var iconTexture))
+            Assignment_IconDict[AssignmentType.None] = new()
             {
-                Job_IconDict[jobId].IconId = (uint)iconId;
-                Job_IconDict[jobId].ColorIcon = iconTexture;
-            }
+                Name = "All",
+                IconId = (uint)allIcon,
+                ColorIcon = allTexture
+            };
         }
-    }
-
-    public static IDalamudTextureWrap GreyJobIcon(Job jobId)
-    {
-        string greyJobIcon = jobId switch
-        {
-            Job.CRP => "ChilledLeves.Resources.GreyscaleJobs.CRP.png",
-            Job.BSM => "ChilledLeves.Resources.GreyscaleJobs.BSM.png",
-            Job.ARM => "ChilledLeves.Resources.GreyscaleJobs.ARM.png",
-            Job.GSM => "ChilledLeves.Resources.GreyscaleJobs.GSM.png",
-            Job.LTW => "ChilledLeves.Resources.GreyscaleJobs.LTW.png",
-            Job.WVR => "ChilledLeves.Resources.GreyscaleJobs.WVR.png",
-            Job.ALC => "ChilledLeves.Resources.GreyscaleJobs.ALC.png",
-            Job.CUL => "ChilledLeves.Resources.GreyscaleJobs.CUL.png",
-            Job.MIN => "ChilledLeves.Resources.GreyscaleJobs.MIN.png",
-            Job.BTN => "ChilledLeves.Resources.GreyscaleJobs.BTN.png",
-            Job.FSH => "ChilledLeves.Resources.GreyscaleJobs.FSH.png",
-            _ => "ChilledLeves.Resources.GreyscaleJobs.Default.png",
-        };
-
-        return Svc.Texture.GetFromManifestResource(Assembly.GetExecutingAssembly(), greyJobIcon).GetWrapOrEmpty();
     }
 }

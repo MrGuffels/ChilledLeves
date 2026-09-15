@@ -26,7 +26,6 @@ namespace ChilledLeves.Ui
         private static readonly Dictionary<string, Action> DebugTabs = new()
         {
             ["Table: Logs"] = () => Table_Logs.Draw(),
-            ["Table: Leve Details"] = () => Table_LeveInfo.Draw(),
             ["Table: Npc Info"] = () => Table_NpcInfo.Draw(),
             ["Table: Aethernet"] = () => Table_Aethernet.Draw(),
             ["Table: Gathering Info"] = () => Table_GatherInfo.Draw(),

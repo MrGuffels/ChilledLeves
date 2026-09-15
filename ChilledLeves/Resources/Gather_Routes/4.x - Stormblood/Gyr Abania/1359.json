@@ -1,8 +1,103 @@
 {
   "leveId": 1359,
   "territoryId": 612,
+  "aetheryteId": 98,
   "zoneName": "Gyr Abania",
   "expansionId": 2,
   "gatheringJob": 17,
-  "nodeInfo": []
+  "nodeInfo": [
+    {
+      "baseId": 31835,
+      "position": {
+        "x": -617.4195,
+        "y": 44.3709,
+        "z": 277.7963
+      },
+      "gathering_FanInfo": {
+        "fan_StartAngle": 333,
+        "fan_EndAngle": 67,
+        "fan_DistanceMin": 1,
+        "fan_DistanceMax": 2,
+        "fan_Height": 0
+      },
+      "flight_FanInfo": {
+        "fan_StartAngle": 333,
+        "fan_EndAngle": 67,
+        "fan_DistanceMin": 2.5,
+        "fan_DistanceMax": 4,
+        "fan_Height": 0
+      },
+      "requiresFlying": false
+    },
+    {
+      "baseId": 31838,
+      "position": {
+        "x": -620.7314,
+        "y": 47.0285,
+        "z": 259.4798
+      },
+      "gathering_FanInfo": {
+        "fan_StartAngle": 164,
+        "fan_EndAngle": 270,
+        "fan_DistanceMin": 1,
+        "fan_DistanceMax": 2,
+        "fan_Height": 0
+      },
+      "flight_FanInfo": {
+        "fan_StartAngle": 164,
+        "fan_EndAngle": 270,
+        "fan_DistanceMin": 2.5,
+        "fan_DistanceMax": 4,
+        "fan_Height": 0
+      },
+      "requiresFlying": false
+    },
+    {
+      "baseId": 31837,
+      "position": {
+        "x": -630.3591,
+        "y": 48.62683,
+        "z": 252.8793
+      },
+      "gathering_FanInfo": {
+        "fan_StartAngle": 157,
+        "fan_EndAngle": 238,
+        "fan_DistanceMin": 1,
+        "fan_DistanceMax": 2,
+        "fan_Height": 0
+      },
+      "flight_FanInfo": {
+        "fan_StartAngle": 157,
+        "fan_EndAngle": 238,
+        "fan_DistanceMin": 2.5,
+        "fan_DistanceMax": 4,
+        "fan_Height": 0
+      },
+      "requiresFlying": false
+    },
+    {
+      "baseId": 31836,
+      "position": {
+        "x": -633.6865,
+        "y": 48.71696,
+        "z": 264.295
+      },
+      "gathering_FanInfo": {
+        "fan_StartAngle": 299,
+        "fan_EndAngle": 38,
+        "fan_DistanceMin": 1,
+        "fan_DistanceMax": 2,
+        "fan_Height": 0
+      },
+      "flight_FanInfo": {
+        "fan_StartAngle": 299,
+        "fan_EndAngle": 38,
+        "fan_DistanceMin": 2.5,
+        "fan_DistanceMax": 4,
+        "fan_Height": 0
+      },
+      "requiresFlying": false
+    }
+  ],
+  "flyingNeeded": false
 }

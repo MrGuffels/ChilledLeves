@@ -20,7 +20,7 @@ public static partial class Utils
             : InventoryManager.Instance()->GetInventoryItemCount(itemID) + InventoryManager.Instance()->GetInventoryItemCount(itemID + 500_000);
     }
 
-    public static int Leve_RequiredAmount(LeveInfo.Material_Turnin materialInfo)
+    public static int Leve_RequiredAmount(LeveInfo.Info_MaterialTurnin materialInfo)
     {
         bool allowMultiTurnin = C.AllowMultiTurnin;
         var turninAmount = materialInfo.TurninAmount;

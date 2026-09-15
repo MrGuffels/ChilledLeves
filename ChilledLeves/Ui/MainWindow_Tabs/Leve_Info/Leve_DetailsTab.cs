@@ -21,7 +21,7 @@ namespace ChilledLeves.Ui.MainWindow_Tabs.Leve_Info
 
             if (LeveInfo.Leve_SheetInfo.TryGetValue(selectedLeve, out var leve))
             {
-                var jobImage = LeveInfo.Job_IconDict[leve.Job].ColorIcon;
+                var jobImage = LeveInfo.Assignment_IconDict[leve.JobAssignmentType].ColorIcon;
                 ImGui.Image(jobImage.GetWrapOrEmpty().Handle, new Vector2(24, 24));
                 ImGui.SameLine();
                 ImGui.AlignTextToFramePadding();
@@ -89,7 +89,7 @@ namespace ChilledLeves.Ui.MainWindow_Tabs.Leve_Info
             }
         }
 
-        private static void LeveInfo_Table(LeveInfo.Leve_SheetData leve)
+        private static void LeveInfo_Table(LeveInfo.Info_LeveSheetData leve)
         {
             ImGui.Separator();
             Theme_Colors.HeaderText($"Leve Info/Rewards");
@@ -136,20 +136,20 @@ namespace ChilledLeves.Ui.MainWindow_Tabs.Leve_Info
                 // Completion Status
                 ImGui.TableNextRow();
                 ImGui.TableSetColumnIndex(0);
-                GameIcons.DrawInlineOrIcon(LeveInfo.LeveStatus[Leve_Status.NotGrabbed], FontAwesomeIcon.CheckSquare);
+                GameIcons.DrawInlineOrIcon(LeveInfo.Leve_State[Leve_Status.NotGrabbed], FontAwesomeIcon.CheckSquare);
                 ImGui.SameLine();
                 ImGui.AlignTextToFramePadding();
                 ImGui.Text($"Completed");
 
                 ImGui.TableNextColumn();
-                uint statusId = Utils.Leve_IsComplete(selectedLeve) ? LeveInfo.LeveStatus[Leve_Status.NotComplete] : LeveInfo.LeveStatus[Leve_Status.Complete];
+                uint statusId = Utils.Leve_IsComplete(selectedLeve) ? LeveInfo.Leve_State[Leve_Status.NotComplete] : LeveInfo.Leve_State[Leve_Status.Complete];
                 GameIcons.DrawInline(statusId, false);
 
                 // TODO: Throw in potentional item rewards
             }
         }
 
-        private static void NpcDetails_Table(LeveInfo.Leve_SheetData leve)
+        private static void NpcDetails_Table(LeveInfo.Info_LeveSheetData leve)
         {
             ImGui.Separator();
             Theme_Colors.HeaderText("Leve Vendors");
@@ -169,7 +169,7 @@ namespace ChilledLeves.Ui.MainWindow_Tabs.Leve_Info
                     ImGui.TableNextRow();
                     ImGui.TableSetColumnIndex(0);
 
-                    if (LeveInfo.LeveNpc_Info.TryGetValue(vendor, out var vendorInfo))
+                    if (LeveInfo.Levemete_Info.TryGetValue(vendor, out var vendorInfo))
                     {
                         ImGui.AlignTextToFramePadding();
                         ImGui.Text($"{ExcelHelper.Sheet_TerritoryType.GetRow(vendorInfo.TerritoryId).PlaceName.Value.Name}");
@@ -204,7 +204,7 @@ namespace ChilledLeves.Ui.MainWindow_Tabs.Leve_Info
 
                 ImGui.TableNextRow();
                 ImGui.TableSetColumnIndex(0);
-                if (LeveInfo.LeveNpc_Info.TryGetValue(leve.Npc_Turnin, out var turninNpc))
+                if (LeveInfo.Levemete_Info.TryGetValue(leve.Npc_Turnin, out var turninNpc))
                 {
                     ImGui.AlignTextToFramePadding();
                     ImGui.Text($"{ExcelHelper.Sheet_TerritoryType.GetRow(turninNpc.TerritoryId).PlaceName.Value.Name}");
@@ -218,7 +218,7 @@ namespace ChilledLeves.Ui.MainWindow_Tabs.Leve_Info
             }
         }
 
-        private static void CraftingDetails_Table(LeveInfo.Leve_SheetData leve)
+        private static void CraftingDetails_Table(LeveInfo.Info_LeveSheetData leve)
         {
             if (LeveInfo.LeveJobs_Material.Contains(leve.Job))
             {
@@ -262,7 +262,7 @@ namespace ChilledLeves.Ui.MainWindow_Tabs.Leve_Info
             }
         }
 
-        private static void GatheringDetails_Table(LeveInfo.Leve_SheetData leve)
+        private static void GatheringDetails_Table(LeveInfo.Info_LeveSheetData leve)
         {
             if (LeveInfo.LeveJobs_Gathering.Contains(leve.Job))
             {

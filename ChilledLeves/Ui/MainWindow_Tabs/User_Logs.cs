@@ -20,6 +20,11 @@ namespace ChilledLeves.Ui.MainWindow_Tabs
                 {
                     IceLogging.LogSystem.CopyToClipboard();
                 }
+                ImGui.SameLine();
+                if (ImGui.Button("Clear"))
+                {
+                    IceLogging.LogSystem.Clear();
+                }
 
                 using (var logTable = ImRaii.Child("Log Details Window", new(-1, -1), false))
                 {

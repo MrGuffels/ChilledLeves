@@ -12,30 +12,27 @@ namespace ChilledLeves.Utilities.LeveData;
 
 public static partial class LeveInfo
 {
-    public class Leve_SheetData
+    public class Info_LeveSheetData
     {
         public string LeveName { get; set; } = "???";
-        public uint JobAssignmentType { get; set; } = 0;
+        public AssignmentType JobAssignmentType { get; set; } = AssignmentType.None;
         public ExpansionIds Expansion { get; set; } = ExpansionIds.ARR;
         public Job Job { get; set; } = Job.ADV;
         public uint Level { get; set; } = 0;
         public List<uint> Npc_Vendors { get; set; } = new();
-        // TODO: Change this to use the above ^ There isn't to many npcs that have multi (it's really... just a handful)
         public uint Npc_Turnin { get; set; } = 0;
-
-        public uint Npc_Vendor { get; set; } = 0;
         public uint QuestID { get; set; } = 0;
         public int ExpReward { get; set; } = -1;
         public int GilReward { get; set; } = -1;
         public int AllowanceCost { get; set; } = -1;
         public LeveKind LeveType { get; set; } = LeveKind.Battlecraft;
         public GatheringRule GatheringRule { get; set; } = GatheringRule.None;
-        public MapInfo Gather_MapInfo { get; set; } = new();
-        public Material_Turnin MaterialInfo { get; set; } = new();
-        public Gathering_Turnin Gather_NodeInfo { get; set; } = new();
+        public Info_Map Gather_MapInfo { get; set; } = new();
+        public Info_MaterialTurnin MaterialInfo { get; set; } = new();
+        public Info_GatheringTurnin Gather_NodeInfo { get; set; } = new();
     }
 
-    public class Material_Turnin
+    public class Info_MaterialTurnin
     {
         public uint Item_Id { get; set; } = 0;
         public string Item_Name { get; set; } = "???";
@@ -45,25 +42,25 @@ public static partial class LeveInfo
         public int RepeatAmount { get; set; } = -1;
     }
 
-    public class Gathering_Turnin
+    public class Info_GatheringTurnin
     {
         public List<uint> NodeIds { get; set; } = new();
-        public List<GatherItems> GatherItems { get; set; } = new();
+        public List<Info_GatherItems> GatherItems { get; set; } = new();
     }
 
-    public class GatherItems
+    public class Info_GatherItems
     {
         public uint ItemId { get; set; } = 0;
         public int Amount { get; set; } = 0;
     }
-    public class MapInfo
+    public class Info_Map
     {
         public Vector3 Location { get; set; } = Vector3.Zero;
         public uint TerritoryId { get; set; } = 0;
         public int Radius { get; set; } = 0;
     }
 
-    public static Dictionary<uint, Leve_SheetData> Leve_SheetInfo = new();
+    public static Dictionary<uint, Info_LeveSheetData> Leve_SheetInfo = new();
 
     public static Dictionary<LeveKind, string> Leve_SelectText = new();
 
@@ -86,6 +83,11 @@ public static partial class LeveInfo
         }
     }
 
+    /// <summary>
+    /// Leves that are just garbage data... these shouldn't exist but do? But they also don't have any actual leve info. Might be relics of a time...
+    /// </summary>
+    private static readonly List<uint> IgnoreLeves = new() { 508, 514, 525, 531, 552, 554, 562, 564, 582, 597, 822, 827, 832 };
+
     public static void PopulateLeveInfo()
     {
         var leve_Sheet = Svc.Data.GetExcelSheet<Leve>();
@@ -97,9 +99,10 @@ public static partial class LeveInfo
                 if (row.LeveClient.RowId == 0)
                     continue;
 
-                var assignmentType = row.LeveAssignmentType.RowId;
-                if (!Assigned_LeveJobs.Contains(assignmentType))
+                if (IgnoreLeves.Contains(row.RowId))
                     continue;
+
+                var assignmentType = (AssignmentType)row.LeveAssignmentType.RowId;
 
                 var id = row.RowId;
                 string leveName = row.Name.ToString();
@@ -108,27 +111,19 @@ public static partial class LeveInfo
 
                 PluginLog.Debug($"Leve: {id} being checked");
 
-                var job = (Job)row.ClassJobCategory.RowId - 1;
+                Job job = Job.GLA;
+                if (!Assignment_Battle.Contains(assignmentType))
+                {
+                    job = (Job)row.ClassJobCategory.RowId - 1;
+                }
                 var level = row.ClassJobLevel;
 
-                var potentionalClients = LeveNpc_Info.Where(x => x.Value.Leves.Contains(id));
+                var potentionalClients = Levemete_Info.Where(x => x.Value.Leves.Contains(id));
                 List<uint> leveVendors = new();
                 foreach (var client in potentionalClients)
                 {
                     leveVendors.Add(client.Key);
                 }
-
-                // - - - TODO: Need to remove this once i finish re-wiring - - - // 
-
-                var leveClient = row.LeveClient.RowId;
-                var leveVendorEntry = LeveNpc_Info.Where(x => x.Value.Leves.Contains(id)).FirstOrDefault();
-                if (leveVendorEntry.Key == 0) // or check if leveVendorEntry.Value == null
-                {
-                    PluginLog.Warning($"Leve {id} ({leveName}) has no vendor in LeveNpc_Info, skipping");
-                }
-                var leve_Vendor = leveVendorEntry.Key;
-
-                // - - - End TODO - - - //
 
                 uint leve_Turnin = 0;
 
@@ -185,12 +180,12 @@ public static partial class LeveInfo
                     };
                 }
 
-                Material_Turnin materialList = new();
-                Gathering_Turnin gatheringList = new();
-                MapInfo mapInfo = new();
+                Info_MaterialTurnin materialList = new();
+                Info_GatheringTurnin gatheringList = new();
+                Info_Map mapInfo = new();
                 GatheringRule rule = GatheringRule.None;
 
-                if (Material_LeveJobs.Contains(assignmentType))
+                if (Assignment_Crafters.Contains(assignmentType))
                 {
                     if (Svc.Data.GetExcelSheet<CraftLeve>().TryGetRow(questID, out var materialInfo))
                     {
@@ -219,10 +214,10 @@ public static partial class LeveInfo
                         PluginLog.Verbose($"No crafting info for: {id}");
                     }
                 }
-                else if (Gathering_LeveJobs.Contains(assignmentType))
+                else if (Assignment_Gathering.Contains(assignmentType))
                 {
                     List<uint> gatherPoints = new();
-                    List<GatherItems> gatherItems = new();
+                    List<Info_GatherItems> gatherItems = new();
 
                     var gatherLeveId = row.DataId.RowId;
                     var levelData = row.LevelStart.Value;
@@ -256,7 +251,7 @@ public static partial class LeveInfo
                                 var itemId = gatheringLeve.RequiredItem[i].RowId;
                                 var amount = gatheringLeve.RequiredItemQuantity[i];
 
-                                GatherItems reqItems = new()
+                                Info_GatherItems reqItems = new()
                                 {
                                     ItemId = itemId,
                                     Amount = amount,
@@ -274,6 +269,10 @@ public static partial class LeveInfo
                     gatheringList.GatherItems = gatherItems;
                     gatheringList.NodeIds = gatherPoints;
                 }
+                else if (Assignment_Battle.Contains(assignmentType))
+                {
+                    // Nothing atm, just pass it off like normal... hopefully...
+                }
 
                 if (!Leve_SheetInfo.ContainsKey(id))
                 {
@@ -284,7 +283,6 @@ public static partial class LeveInfo
                         Job = job,
                         Expansion = expansion,
                         Level = level,
-                        Npc_Vendor = leve_Vendor,
                         Npc_Vendors = leveVendors,
                         Npc_Turnin = leve_Turnin,
                         QuestID = questID,

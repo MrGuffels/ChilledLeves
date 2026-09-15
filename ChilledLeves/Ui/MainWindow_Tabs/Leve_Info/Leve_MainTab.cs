@@ -1,4 +1,6 @@
-﻿using ChilledLeves.Utilities.LeveData;
+﻿using ChilledLeves.Enums;
+using ChilledLeves.Gui;
+using ChilledLeves.Utilities.LeveData;
 using Dalamud.Interface.Colors;
 using Dalamud.Interface.Utility;
 using Dalamud.Interface.Utility.Raii;
@@ -87,8 +89,17 @@ internal class Leve_MainTab
 
         int itemsPerRow = 4;
 
-        Job[] Crafters = { Job.CRP, Job.BSM, Job.ARM, Job.GSM, Job.LTW, Job.WVR, Job.ALC, Job.CUL };
-        Job[] Gatherers = { Job.MIN, Job.BTN, Job.FSH };
+        AssignmentType[] Crafters = 
+        { 
+            AssignmentType.Carpenter, AssignmentType.Blacksmith,
+            AssignmentType.Armorer, AssignmentType.Goldsmith,
+            AssignmentType.Leatherworker, AssignmentType.Weaver,
+            AssignmentType.Alchemist, AssignmentType.Culinarian,  
+        };
+        AssignmentType[] Gatherers = 
+        {
+            AssignmentType.Miner, AssignmentType.Botanist, AssignmentType.Fisher
+        };
 
         // Crafters section
         ImGui.SetCursorPosX(ImGui.GetCursorPosX() + iconSpacing);
@@ -174,9 +185,9 @@ internal class Leve_MainTab
         }
     }
 
-    private static void JobToggleButton(Job selectedClass)
+    private static void JobToggleButton(AssignmentType selectedClass)
     {
-        bool enabled = C.Job_LeveFilter[selectedClass];
+        bool enabled = C.Assignemnt_Filter[selectedClass];
 
         using var framePadding = ImRaii.PushStyle(ImGuiStyleVar.FramePadding, new Vector2(2, 2));
         using var colors = ImRaii.PushColor(ImGuiCol.Button, Vector4.Zero); // Initialize with dummy
@@ -184,7 +195,6 @@ internal class Leve_MainTab
 
         if (enabled)
         {
-            // Indicate an enabled job filter with some highlight
             if (C.UseIceTheme)
             {
                 colors.Push(ImGuiCol.Button, Theme_Colors.LightSlate);
@@ -199,97 +209,32 @@ internal class Leve_MainTab
         }
         else if (C.UseIceTheme)
         {
-            // Disabled job with Ice theme
             colors.Push(ImGuiCol.Button, Theme_Colors.DarkSlate);
             colors.Push(ImGuiCol.Border, Theme_Colors.TranslucentIce);
             styles.Push(ImGuiStyleVar.FrameBorderSize, 0.5f);
         }
         else
         {
-            // Disabled job with Dalamud theme
             colors.Push(ImGuiCol.Button, new Vector4(0.2f, 0.2f, 0.2f, 0.1f));
             colors.Push(ImGuiCol.Border, new Vector4(0.4f, 0.4f, 0.4f, 0.5f));
             styles.Push(ImGuiStyleVar.FrameBorderSize, 0.5f);
         }
 
         var globalScale = ImGuiHelpers.GlobalScale;
-        Vector2 size = new Vector2(26 * globalScale, 26 * globalScale);
+        var size = new Vector2(28 * globalScale, 28 * globalScale);
+        var iconId = LeveInfo.Assignment_IconDict[selectedClass].IconId;
 
-        if (enabled)
+        bool clicked = GameIcons.DrawButton(iconId, $"jobtoggle_{selectedClass}", size, grey: !enabled);
+
+        if (clicked)
         {
-            var image = LeveInfo.Job_IconDict[selectedClass].ColorIcon;
-            if (ImGui.ImageButton(image.GetWrapOrEmpty().Handle, size))
-            {
-                C.Job_LeveFilter[selectedClass] = !C.Job_LeveFilter[selectedClass];
-            }
-            if (ImGui.IsItemClicked(ImGuiMouseButton.Right))
-            {
-                foreach (var jobName in C.Job_LeveFilter)
-                {
-                    if (jobName.Key != selectedClass)
-                        C.Job_LeveFilter[jobName.Key] = false;
-                    else
-                        C.Job_LeveFilter[jobName.Key] = true;
-                }
-                C.Save();
-            }
+            C.Assignemnt_Filter[selectedClass] = !C.Assignemnt_Filter[selectedClass];
         }
-        else
+        if (ImGui.IsItemClicked(ImGuiMouseButton.Right))
         {
-            var image = LeveInfo.GreyJobIcon(selectedClass);
-            if (ImGui.ImageButton(image.Handle, size))
-            {
-                C.Job_LeveFilter[selectedClass] = !C.Job_LeveFilter[selectedClass];
-            }
-            if (ImGui.IsItemClicked(ImGuiMouseButton.Right))
-            {
-                foreach (var jobName in C.Job_LeveFilter)
-                {
-                    if (jobName.Key != selectedClass)
-                        C.Job_LeveFilter[jobName.Key] = false;
-                    else
-                        C.Job_LeveFilter[jobName.Key] = true;
-                }
-                C.Save();
-            }
+            foreach (var jobName in C.Assignemnt_Filter.Keys.ToList())
+                C.Assignemnt_Filter[jobName] = jobName == selectedClass;
+            C.Save();
         }
-    }
-
-    public static uint GetJobId(string jobName)
-    {
-        return jobName switch
-        {
-            "Carpenter" => 8,
-            "Blacksmith" => 9,
-            "Armorer" => 10,
-            "Goldsmith" => 11,
-            "Leatherworker" => 12,
-            "Weaver" => 13,
-            "Alchemist" => 14,
-            "Culinarian" => 15,
-            "Miner" => 16,
-            "Botanist" => 17,
-            "Fisher" => 18,
-            _ => throw new ArgumentException($"Unknown job: {jobName}")
-        };
-    }
-
-    public static string GetJobName(Job @class)
-    {
-        return @class switch
-        {
-            Job.CRP => "Carpenter",
-            Job.BSM => "Blacksmith",
-            Job.ARM => "Armorer",
-            Job.GSM => "Goldsmith",
-            Job.LTW => "Leatherworker",
-            Job.WVR => "Weaver",
-            Job.ALC => "Alchemist",
-            Job.CUL => "Culinarian",
-            Job.MIN => "Miner",
-            Job.BTN => "Botanist",
-            Job.FSH => "Fisher",
-            _ => throw new ArgumentException($"Unknown job ID: {@class}")
-        };
     }
 }

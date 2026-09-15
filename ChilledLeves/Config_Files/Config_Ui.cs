@@ -8,19 +8,24 @@ namespace ChilledLeves.Config_Files;
 
 public partial class Config
 {
-    public Dictionary<Job, bool> Job_LeveFilter { get; set; } = new()
+    public Dictionary<AssignmentType, bool> Assignemnt_Filter { get; set; } = new()
     {
-        [Job.CRP] = true,
-        [Job.BSM] = true,
-        [Job.ARM] = true,
-        [Job.GSM] = true,
-        [Job.LTW] = true,
-        [Job.WVR] = true,
-        [Job.ALC] = true,
-        [Job.CUL] = true,
-        [Job.MIN] = true,
-        [Job.BTN] = true,
-        [Job.FSH] = true,
+        [AssignmentType.Carpenter] = true,
+        [AssignmentType.Blacksmith] = true,
+        [AssignmentType.Armorer] = true,
+        [AssignmentType.Goldsmith] = true,
+        [AssignmentType.Leatherworker] = true,
+        [AssignmentType.Weaver] = true,
+        [AssignmentType.Alchemist] = true,
+        [AssignmentType.Culinarian] = true,
+        [AssignmentType.Miner] = true,
+        [AssignmentType.Botanist] = true,
+        [AssignmentType.Fisher] = true,
+
+        [AssignmentType.Battlecraft] = false,
+        [AssignmentType.Maelstorm] = false,
+        [AssignmentType.TwinAdder] = false,
+        [AssignmentType.ImmortalFlames] = false,
     };
 
     public Dictionary<string, bool> Leve_Filter { get; set; } = new()

@@ -1,7 +1,7 @@
 {
   "leveId": 1379,
   "territoryId": 614,
-  "aetheryteId": 0,
+  "aetheryteId": 107,
   "zoneName": "Othard",
   "expansionId": 2,
   "gatheringJob": 16,
@@ -152,18 +152,18 @@
         "z": -160.4826
       },
       "gathering_FanInfo": {
-        "fan_StartAngle": 168,
-        "fan_EndAngle": 289,
+        "fan_StartAngle": 188,
+        "fan_EndAngle": 275,
         "fan_DistanceMin": 1,
         "fan_DistanceMax": 2,
         "fan_Height": 0.45
       },
       "flight_FanInfo": {
-        "fan_StartAngle": 0,
-        "fan_EndAngle": 0,
-        "fan_DistanceMin": 1,
-        "fan_DistanceMax": 3,
-        "fan_Height": 0
+        "fan_StartAngle": 188,
+        "fan_EndAngle": 275,
+        "fan_DistanceMin": 2.5,
+        "fan_DistanceMax": 4,
+        "fan_Height": 0.28
       },
       "requiresFlying": false
     },

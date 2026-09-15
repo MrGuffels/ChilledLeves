@@ -1,8 +1,287 @@
 {
   "leveId": 1377,
   "territoryId": 613,
+  "aetheryteId": 106,
   "zoneName": "Othard",
   "expansionId": 2,
   "gatheringJob": 16,
-  "nodeInfo": []
+  "nodeInfo": [
+    {
+      "baseId": 31981,
+      "position": {
+        "x": -98.74568,
+        "y": -91.44762,
+        "z": -363.4375
+      },
+      "gathering_FanInfo": {
+        "fan_StartAngle": 0,
+        "fan_EndAngle": 359,
+        "fan_DistanceMin": 1,
+        "fan_DistanceMax": 2,
+        "fan_Height": 0.3
+      },
+      "flight_FanInfo": {
+        "fan_StartAngle": 0,
+        "fan_EndAngle": 0,
+        "fan_DistanceMin": 1,
+        "fan_DistanceMax": 3,
+        "fan_Height": 0
+      },
+      "requiresFlying": false
+    },
+    {
+      "baseId": 31983,
+      "position": {
+        "x": -100.0834,
+        "y": -92.50864,
+        "z": -355.592
+      },
+      "gathering_FanInfo": {
+        "fan_StartAngle": 0,
+        "fan_EndAngle": 359,
+        "fan_DistanceMin": 1,
+        "fan_DistanceMax": 2,
+        "fan_Height": 0.3
+      },
+      "flight_FanInfo": {
+        "fan_StartAngle": 0,
+        "fan_EndAngle": 0,
+        "fan_DistanceMin": 1,
+        "fan_DistanceMax": 3,
+        "fan_Height": 0
+      },
+      "requiresFlying": false
+    },
+    {
+      "baseId": 31982,
+      "position": {
+        "x": -97.38283,
+        "y": -92.791,
+        "z": -358.125
+      },
+      "gathering_FanInfo": {
+        "fan_StartAngle": 46,
+        "fan_EndAngle": 301,
+        "fan_DistanceMin": 1,
+        "fan_DistanceMax": 2,
+        "fan_Height": 0.7
+      },
+      "flight_FanInfo": {
+        "fan_StartAngle": 46,
+        "fan_EndAngle": 301,
+        "fan_DistanceMin": 1,
+        "fan_DistanceMax": 2,
+        "fan_Height": 0.7
+      },
+      "requiresFlying": false
+    },
+    {
+      "baseId": 31984,
+      "position": {
+        "x": -107.4944,
+        "y": -92.20153,
+        "z": -362.043
+      },
+      "gathering_FanInfo": {
+        "fan_StartAngle": 0,
+        "fan_EndAngle": 359,
+        "fan_DistanceMin": 1,
+        "fan_DistanceMax": 2,
+        "fan_Height": 0.7
+      },
+      "flight_FanInfo": {
+        "fan_StartAngle": 0,
+        "fan_EndAngle": 0,
+        "fan_DistanceMin": 1,
+        "fan_DistanceMax": 3,
+        "fan_Height": 0
+      },
+      "requiresFlying": false
+    },
+    {
+      "baseId": 31985,
+      "position": {
+        "x": -112.6578,
+        "y": -94.99117,
+        "z": -358.4694
+      },
+      "gathering_FanInfo": {
+        "fan_StartAngle": 124,
+        "fan_EndAngle": 343,
+        "fan_DistanceMin": 1,
+        "fan_DistanceMax": 2,
+        "fan_Height": 0.3
+      },
+      "flight_FanInfo": {
+        "fan_StartAngle": 124,
+        "fan_EndAngle": 343,
+        "fan_DistanceMin": 1,
+        "fan_DistanceMax": 2,
+        "fan_Height": 0.3
+      },
+      "requiresFlying": false
+    },
+    {
+      "baseId": 31986,
+      "position": {
+        "x": -138.6759,
+        "y": -94.46069,
+        "z": -378.1833
+      },
+      "gathering_FanInfo": {
+        "fan_StartAngle": 65,
+        "fan_EndAngle": 203,
+        "fan_DistanceMin": 1,
+        "fan_DistanceMax": 2,
+        "fan_Height": 0
+      },
+      "flight_FanInfo": {
+        "fan_StartAngle": 65,
+        "fan_EndAngle": 203,
+        "fan_DistanceMin": 1,
+        "fan_DistanceMax": 2,
+        "fan_Height": 0
+      },
+      "requiresFlying": false
+    },
+    {
+      "baseId": 31991,
+      "position": {
+        "x": -147.2532,
+        "y": -105.3403,
+        "z": -358.7645
+      },
+      "gathering_FanInfo": {
+        "fan_StartAngle": 122,
+        "fan_EndAngle": 270,
+        "fan_DistanceMin": 1,
+        "fan_DistanceMax": 2,
+        "fan_Height": 0.3
+      },
+      "flight_FanInfo": {
+        "fan_StartAngle": 122,
+        "fan_EndAngle": 270,
+        "fan_DistanceMin": 1,
+        "fan_DistanceMax": 2,
+        "fan_Height": 0.3
+      },
+      "requiresFlying": false
+    },
+    {
+      "baseId": 31988,
+      "position": {
+        "x": -160.6317,
+        "y": -98.47617,
+        "z": -373.6526
+      },
+      "gathering_FanInfo": {
+        "fan_StartAngle": 1,
+        "fan_EndAngle": 359,
+        "fan_DistanceMin": 1,
+        "fan_DistanceMax": 2,
+        "fan_Height": 0.5
+      },
+      "flight_FanInfo": {
+        "fan_StartAngle": 0,
+        "fan_EndAngle": 0,
+        "fan_DistanceMin": 1,
+        "fan_DistanceMax": 3,
+        "fan_Height": 0
+      },
+      "requiresFlying": false
+    },
+    {
+      "baseId": 31987,
+      "position": {
+        "x": -156.6765,
+        "y": -96.73639,
+        "z": -377.3039
+      },
+      "gathering_FanInfo": {
+        "fan_StartAngle": 57,
+        "fan_EndAngle": 278,
+        "fan_DistanceMin": 1,
+        "fan_DistanceMax": 2,
+        "fan_Height": 0.4
+      },
+      "flight_FanInfo": {
+        "fan_StartAngle": 0,
+        "fan_EndAngle": 0,
+        "fan_DistanceMin": 1,
+        "fan_DistanceMax": 3,
+        "fan_Height": 0
+      },
+      "requiresFlying": false
+    },
+    {
+      "baseId": 31992,
+      "position": {
+        "x": -163.8961,
+        "y": -100.6262,
+        "z": -369.5663
+      },
+      "gathering_FanInfo": {
+        "fan_StartAngle": 87,
+        "fan_EndAngle": 153,
+        "fan_DistanceMin": 1,
+        "fan_DistanceMax": 2,
+        "fan_Height": 0.4
+      },
+      "flight_FanInfo": {
+        "fan_StartAngle": 0,
+        "fan_EndAngle": 0,
+        "fan_DistanceMin": 1,
+        "fan_DistanceMax": 3,
+        "fan_Height": 0
+      },
+      "requiresFlying": false
+    },
+    {
+      "baseId": 31990,
+      "position": {
+        "x": -177.5064,
+        "y": -95.58974,
+        "z": -362.7752
+      },
+      "gathering_FanInfo": {
+        "fan_StartAngle": 0,
+        "fan_EndAngle": 359,
+        "fan_DistanceMin": 1,
+        "fan_DistanceMax": 2,
+        "fan_Height": 0.5
+      },
+      "flight_FanInfo": {
+        "fan_StartAngle": 0,
+        "fan_EndAngle": 0,
+        "fan_DistanceMin": 1,
+        "fan_DistanceMax": 3,
+        "fan_Height": 0
+      },
+      "requiresFlying": false
+    },
+    {
+      "baseId": 31989,
+      "position": {
+        "x": -204.1706,
+        "y": -94.73928,
+        "z": -363.933
+      },
+      "gathering_FanInfo": {
+        "fan_StartAngle": 0,
+        "fan_EndAngle": 359,
+        "fan_DistanceMin": 1,
+        "fan_DistanceMax": 2,
+        "fan_Height": 0.3
+      },
+      "flight_FanInfo": {
+        "fan_StartAngle": 0,
+        "fan_EndAngle": 0,
+        "fan_DistanceMin": 1,
+        "fan_DistanceMax": 3,
+        "fan_Height": 0
+      },
+      "requiresFlying": false
+    }
+  ],
+  "flyingNeeded": false
 }

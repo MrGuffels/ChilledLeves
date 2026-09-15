@@ -5,9 +5,9 @@ namespace ChilledLeves.Utilities.LeveData;
 
 public static partial class LeveInfo
 {
-    public class VendorInfo
+    public class Info_Vendor
     {
-        public string Name { get; set; } = "";
+        public string Name { get; set; } = "???";
         public uint TerritoryId { get; set; } = 0;
         public Vector3 Npc_InteractZone { get; set; } = Vector3.Zero;
         public Vector3 Npc_Location { get; set; } = Vector3.Zero;
@@ -21,9 +21,13 @@ public static partial class LeveInfo
 
         // For Grabbing Leves
         public List<uint> Leves { get; set; } = new();
+        public string TerritoryName()
+        {
+            return ExcelHelper.Sheet_TerritoryType.GetRow(TerritoryId).PlaceName.Value.Name.ToString();
+        }
     }
 
-    public static Dictionary<uint, VendorInfo> LeveNpc_Info = new()
+    public static Dictionary<uint, Info_Vendor> Levemete_Info = new()
     {
         #region ARR Leve NPC's
 
@@ -1092,7 +1096,6 @@ public static partial class LeveInfo
 
     public static string NPCName(uint NpcID)
     {
-        var NPCSheet = Svc.Data.GetExcelSheet<ENpcResident>();
-        return NPCSheet.GetRow(NpcID).Singular.ToString();
+        return ExcelHelper.Sheet_ENpcResident.GetRow(NpcID).Singular.ToString();
     }
 }

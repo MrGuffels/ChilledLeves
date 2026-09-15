@@ -13,6 +13,7 @@ internal static class ExcelHelper
     internal static ExcelSheet<Map> Sheet_Map;
     internal static ExcelSheet<LeveGuildleveAssignment> Sheet_leveText;
     internal static ExcelSheet<Aetheryte> Sheet_Aetheryte;
+    internal static ExcelSheet<ENpcResident> Sheet_ENpcResident;
 
     internal static ExcelSheet<Item> Sheet_Item;
     internal static ExcelSheet<EventItem> Sheet_EventItem;
@@ -40,6 +41,7 @@ internal static class ExcelHelper
         Sheet_Level = Svc.Data.GetExcelSheet<Level>();
         Sheet_GatheringExp = Svc.Data.GetExcelSheet<GatheringExp>();
         Sheet_Mount = Svc.Data.GetExcelSheet<Mount>();
+        Sheet_ENpcResident = Svc.Data.GetExcelSheet<ENpcResident>();
     }
 
     public static string GetTerritoryName(uint territoryid)
