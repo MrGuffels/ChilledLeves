@@ -168,19 +168,6 @@ namespace ChilledLeves.Ui.MainWindow_Tabs
 
                         if (leveList.Count() != 0)
                         {
-                            if (!C.Npc_LevePriority.ContainsKey(selectedNpc))
-                            {
-                                C.Npc_LevePriority[selectedNpc] = new();
-                                C.SaveDebounced();
-                            }
-
-                            foreach (var leve in leveList)
-                            {
-                                if (!C.Npc_LevePriority[selectedNpc].Contains(leve))
-                                    C.Npc_LevePriority[selectedNpc].Add(leve);
-
-                                C.SaveDebounced();
-                            }
 
                             _leveDragDrop.Begin();
                             using (var table = ImRaii.Table("Levemete: Table Info", 7, ImGuiTableFlags.Borders | ImGuiTableFlags.SizingFixedFit | ImGuiTableFlags.RowBg))
@@ -198,11 +185,12 @@ namespace ChilledLeves.Ui.MainWindow_Tabs
 
                                 ImGui.TableHeadersRow();
 
-                                var validLeves = C.Npc_LevePriority[selectedNpc].Where(x => LeveInfo.Leve_SheetInfo[x].JobAssignmentType == selectedJob).ToList();
+                                var fullList = C.ARR_LevemetPriority[selectedNpc];
+                                var validLeves = fullList.Where(x => LeveInfo.Leve_SheetInfo[x].JobAssignmentType == selectedJob).ToList();
 
                                 for (int i = 0; i < validLeves.Count(); i++)
                                 {
-                                    var leve = C.Npc_LevePriority[selectedNpc][i];
+                                    var leve = validLeves[i];
                                     var sheetInfo = LeveInfo.Leve_SheetInfo[leve];
                                     ImGui.PushID($"{leve}_{sheetInfo.LeveName}");
 
@@ -211,7 +199,8 @@ namespace ChilledLeves.Ui.MainWindow_Tabs
                                     _leveDragDrop.SetRowColor(leve.ToString());
 
                                     ImGui.TableSetColumnIndex(0);
-                                    _leveDragDrop.DrawButtonDummy(leve.ToString(), C.Npc_LevePriority[selectedNpc], i);
+                                    var realIndex = fullList.IndexOf(leve);
+                                    _leveDragDrop.DrawButtonDummy(leve.ToString(), fullList, realIndex);
 
                                     ImGui.TableNextColumn();
                                     ImGui.AlignTextToFramePadding();

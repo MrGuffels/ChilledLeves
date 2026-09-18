@@ -1,13 +1,7 @@
 ﻿using ChilledLeves.Gui;
-using ChilledLeves.Utilities;
 using ChilledLeves.Utilities.LeveData;
-using ChilledLeves.Utilities.LogInfo;
 using Dalamud.Interface.Utility.Raii;
-using ECommons.Automation.NeoTaskManager;
-using ECommons.ExcelServices;
-using ECommons.Throttlers;
 using FFXIVClientStructs.FFXIV.Client.Game.Event;
-using FFXIVClientStructs.FFXIV.Client.Game.Object;
 using System.Collections.Generic;
 
 namespace ChilledLeves.Ui.DebugTabs;
@@ -37,8 +31,10 @@ internal static unsafe class Ui_LeveInfo
             if (Svc.Targets.Target != null)
             {
                 var target = Svc.Targets.Target;
-
-                ImGui.Text($"Name: {target.Name} | ID: {target.BaseId}");
+                if (ImGui.Button($"Name: {target.Name} | ID: {target.BaseId}"))
+                {
+                    ImGui.SetClipboardText($"{target.BaseId}");
+                }
             }
             ImGui.Separator();
 
@@ -52,13 +48,30 @@ internal static unsafe class Ui_LeveInfo
 
         if (leves.Count() != 0)
         {
-            if (ImGui.Button("Copy missing ID's"))
+
+            var target = Svc.Targets.Target;
+            if (target != null)
             {
-                ImGui.SetClipboardText(AddMissingLeves(leves));
+                if (GetNewLeves(leves, target.BaseId).Count() != 0)
+                {
+                    if (ImGui.Button("Copy missing ID's only"))
+                    {
+                        ImGui.SetClipboardText(AddMissingLeves(leves));
+                    }
+                    ImGui.SameLine();
+                }
+
+                if (ImGui.Button("Copy all leves [old + new]"))
+                {
+                    var list = GetAllLevesSorted(leves);
+                    string newList = string.Join(", ", list);
+
+                    ImGui.SetClipboardText(newList);
+                }
             }
         }
 
-        using (var table = ImRaii.Table("LeveTable", 4, ImGuiTableFlags.Borders | ImGuiTableFlags.RowBg | ImGuiTableFlags.Sortable | ImGuiTableFlags.SizingFixedFit | ImGuiTableFlags.ScrollY))
+        using (var table = ImRaii.Table("LeveTable", 4, ImGuiTableFlags.Borders | ImGuiTableFlags.RowBg | ImGuiTableFlags.SizingFixedFit | ImGuiTableFlags.ScrollY))
         {
             if (!table.Success)
                 return;
@@ -90,22 +103,44 @@ internal static unsafe class Ui_LeveInfo
         }
     }
 
-    private static string AddMissingLeves(List<GuildleveAssignmentEventHandler.GuildleveAssignmentLeve> leves)
+    private static List<uint> GetNewLeves(List<GuildleveAssignmentEventHandler.GuildleveAssignmentLeve> leves, uint baseId)
     {
-        var target = Svc.Targets.Target;
-        var baseId = target.BaseId;
-
         List<uint> newLeves = new();
 
-        if (LeveInfo.Levemete_Info.TryGetValue(baseId, out var vendorInfo))
+        if (!LeveInfo.Levemete_Info.TryGetValue(baseId, out var vendorInfo))
+            return newLeves;
+
+        foreach (var leve in leves)
         {
-            foreach (var leve in leves)
-            {
-                if (!vendorInfo.Leves.Contains(leve.LeveId))
-                    newLeves.Add(leve.LeveId);
-            }
+            if (!vendorInfo.Leves.Contains(leve.LeveId))
+                newLeves.Add(leve.LeveId);
         }
 
+        return newLeves;
+    }
+
+    private static string AddMissingLeves(List<GuildleveAssignmentEventHandler.GuildleveAssignmentLeve> leves)
+    {
+        var baseId = Svc.Targets.Target.BaseId;
+        var newLeves = GetNewLeves(leves, baseId);
+
+        newLeves.Sort();
+
         return string.Join(", ", newLeves);
+    }
+
+    private static List<uint> GetAllLevesSorted(List<GuildleveAssignmentEventHandler.GuildleveAssignmentLeve> leves)
+    {
+        var baseId = Svc.Targets.Target.BaseId;
+
+        if (!LeveInfo.Levemete_Info.TryGetValue(baseId, out var vendorInfo))
+            return GetNewLeves(leves, baseId);
+
+        List<uint> allLeves = new(vendorInfo.Leves);
+        allLeves.AddRange(GetNewLeves(leves, baseId));
+
+        allLeves.Sort();
+
+        return allLeves;
     }
 }

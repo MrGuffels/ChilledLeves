@@ -313,4 +313,48 @@ public static partial class LeveInfo
             C.SaveDebounced();
         }
     }
+
+    public static void Update_ARRGrind()
+    {
+        var arrList = C.ARR_LevemetPriority;
+
+        foreach (var (id, list) in arrList)
+        {
+            if (list == null) continue;
+            if (!LeveInfo.Levemete_Info.TryGetValue(id, out var npcInfo)) continue;
+
+            var levesToRemove = list.Where(leve => !npcInfo.Leves.Contains(leve)).ToList();
+            if (levesToRemove.Count == 0) continue;
+
+            foreach (var leve in levesToRemove)
+                list.Remove(leve);
+
+            C.SaveDebounced();
+        }
+
+        foreach (var (npcId, npcInfo) in LeveInfo.Levemete_Info)
+        {
+            if (npcInfo.Leves.Count == 0) continue;
+
+            if (!arrList.TryGetValue(npcId, out var priorityList))
+            {
+                priorityList = new List<uint>();
+                arrList[npcId] = priorityList;
+            }
+
+            var changed = false;
+            foreach (var leve in npcInfo.Leves)
+            {
+                if (!LeveInfo.Leve_SheetInfo.TryGetValue(leve, out var sheetInfo)) continue;
+                if (sheetInfo.JobAssignmentType is not (AssignmentType.Miner or AssignmentType.Botanist or AssignmentType.Fisher)) continue;
+                if (priorityList.Contains(leve)) continue;
+
+                priorityList.Add(leve);
+                changed = true;
+            }
+
+            if (changed)
+                C.SaveDebounced();
+        }
+    }
 }
