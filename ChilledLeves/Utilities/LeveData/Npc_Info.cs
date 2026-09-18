@@ -72,7 +72,7 @@ public static partial class LeveInfo
             }
         },
         [1001794] = new()
-        { // Gontrant (Ul'dah)
+        { // Eustace
             Name = NPCName(1001794),
             TerritoryId = 130, // Ul'dah
             Aetheryte = 9,
