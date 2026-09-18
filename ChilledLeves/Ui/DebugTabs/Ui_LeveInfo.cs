@@ -1,5 +1,6 @@
 ﻿using ChilledLeves.Gui;
 using ChilledLeves.Utilities;
+using ChilledLeves.Utilities.LeveData;
 using ChilledLeves.Utilities.LogInfo;
 using Dalamud.Interface.Utility.Raii;
 using ECommons.Automation.NeoTaskManager;
@@ -15,189 +16,96 @@ internal static unsafe class Ui_LeveInfo
 {
     public static void Draw()
     {
-        using var child = ImRaii.Child("Leve List Info", default, true);
-
-        var handler = GetHandler();
-        if (handler == null)
+        using (var child = ImRaii.Child("Leve List Info", default, true))
         {
-            ImGui.TextDisabled("No active GuildleveAssignmentEventHandler found.");
-            return;
-        }
 
-        ImGui.Text($"Current type: {handler->CurrentLeveType}");
-        ImGui.Text($"Selected leve id: {handler->SelectedLeveId}");
-        ImGui.Separator();
-
-        if (GenericHelpers.TryGetAddonMaster<GuildLeve>(out var guildLeve) && guildLeve.IsAddonReady)
-        {
-            ImGui.Text($"Current job: {guildLeve.CurrentJob}");
-            if (ImGui.Button("Refresh List"))
+            if (ImGui.Button("Check Handlers"))
             {
-                Refresh_List(guildLeve);
+                LeveInfo.DebugDumpHandlerState();
             }
-            ImGui.SameLine();
-            if (ImGui.Button("Log Handler State"))
+
+            var handler = LeveInfo.GetHandler();
+            if (handler == null)
             {
-                if (handler != null)
-                    LogHandlerState(handler);
+                ImGui.TextDisabled("No active GuildleveAssignmentEventHandler found.");
+                return;
             }
+
+            ImGui.Text($"Current type: {handler->CurrentLeveType}");
+            ImGui.Text($"Selected leve id: {handler->SelectedLeveId}");
+
+            if (Svc.Targets.Target != null)
+            {
+                var target = Svc.Targets.Target;
+
+                ImGui.Text($"Name: {target.Name} | ID: {target.BaseId}");
+            }
+            ImGui.Separator();
+
+            DrawLeveTable(handler);
         }
-
-        DrawLeveTable(handler);
-    }
-
-    // GuildLeveAssignment event handler ID, discovered via HaselDebug plugin
-    // EventFramework -> EventHandlers tab was where tf this existed (thank you hasel...)
-    // Might need to double check this on a major patch to see if it breaks?
-    private static readonly uint GuildleveAssignmentHandlerId = 0x60023;
-    private static GuildleveAssignmentEventHandler* GetHandler()
-    {
-        var framework = EventFramework.Instance();
-        if (framework == null)
-            return null;
-
-        var handler = framework->GetEventHandlerById(GuildleveAssignmentHandlerId);
-        return (GuildleveAssignmentEventHandler*)handler;
-    }
-
-    private static List<GuildleveAssignmentEventHandler.GuildleveAssignmentLeve> GetVisibleLeves(GuildleveAssignmentEventHandler* handler)
-    {
-        var result = new List<GuildleveAssignmentEventHandler.GuildleveAssignmentLeve>();
-
-        foreach (var categoryList in handler->AssignmentLists)
-            foreach (var group in categoryList.Groups)
-                foreach (var subList in group.SubLists)
-                    foreach (var leve in subList.Leves)
-                        result.Add(leve);
-
-        return result;
     }
 
     private static void DrawLeveTable(GuildleveAssignmentEventHandler* handler)
     {
-        var leves = GetVisibleLeves(handler);
+        var leves = LeveInfo.GetVisibleLeves(handler);
 
-        if (!ImGui.BeginTable("LeveTable", 4, ImGuiTableFlags.Borders | ImGuiTableFlags.RowBg | ImGuiTableFlags.Sortable | ImGuiTableFlags.SizingFixedFit))
-            return;
-
-        ImGui.TableSetupColumn("Leve ID");
-        ImGui.TableSetupColumn("Name");
-        ImGui.TableSetupColumn("Level");
-        ImGui.TableSetupColumn("Genre Icon");
-        ImGui.TableHeadersRow();
-
-        foreach (var leve in leves)
+        if (leves.Count() != 0)
         {
-            ImGui.TableNextRow();
-
-            ImGui.TableNextColumn();
-            ImGui.Text(leve.LeveId.ToString());
-
-            ImGui.TableNextColumn();
-            ImGui.TextUnformatted(leve.Name.ToString());
-
-            ImGui.TableNextColumn();
-            ImGui.Text(leve.ClassJobLevel.ToString());
-
-            ImGui.TableNextColumn();
-            GameIcons.DrawInlineOrIcon(leve.GenreIcon, FontAwesomeIcon.Book);
+            if (ImGui.Button("Copy missing ID's"))
+            {
+                ImGui.SetClipboardText(AddMissingLeves(leves));
+            }
         }
 
-        ImGui.EndTable();
+        using (var table = ImRaii.Table("LeveTable", 4, ImGuiTableFlags.Borders | ImGuiTableFlags.RowBg | ImGuiTableFlags.Sortable | ImGuiTableFlags.SizingFixedFit | ImGuiTableFlags.ScrollY))
+        {
+            if (!table.Success)
+                return;
+
+            ImGui.TableSetupColumn("Leve ID");
+            ImGui.TableSetupColumn("Name");
+            ImGui.TableSetupColumn("Level");
+            ImGui.TableSetupColumn("Genre Icon");
+
+            ImGui.TableSetupScrollFreeze(0, 1);
+            ImGui.TableHeadersRow();
+
+            foreach (var leve in leves)
+            {
+                ImGui.TableNextRow();
+
+                ImGui.TableNextColumn();
+                ImGui.Text(leve.LeveId.ToString());
+
+                ImGui.TableNextColumn();
+                ImGui.TextUnformatted(leve.Name.ToString());
+
+                ImGui.TableNextColumn();
+                ImGui.Text(leve.ClassJobLevel.ToString());
+
+                ImGui.TableNextColumn();
+                GameIcons.DrawInlineOrIcon(leve.GenreIcon, FontAwesomeIcon.Book);
+            }
+        }
     }
 
-    private static unsafe HashSet<ushort> _seenLeveIds = new();
-    private static List<GuildleveAssignmentEventHandler.GuildleveAssignmentLeve> _allLeves = new();
-
-    private static readonly List<Job> ValidJobs = new()
+    private static string AddMissingLeves(List<GuildleveAssignmentEventHandler.GuildleveAssignmentLeve> leves)
     {
-        Job.CRP, Job.BSM, Job.ARM, Job.GSM, Job.WVR, Job.LTW, Job.ALC, Job.CUL,
-        Job.MIN, Job.BTN, Job.FSH
-    };
+        var target = Svc.Targets.Target;
+        var baseId = target.BaseId;
 
-    private static int _throttle = 0;
+        List<uint> newLeves = new();
 
-    private static void Refresh_List(GuildLeve guildLeve)
-    {
-        _seenLeveIds.Clear();
-        _allLeves.Clear();
-
-        const string tag = "Tab Scan";
-
-        bool correctJob(Job job)
+        if (LeveInfo.Levemete_Info.TryGetValue(baseId, out var vendorInfo))
         {
-            if (guildLeve.CurrentJob == job)
+            foreach (var leve in leves)
             {
-                IceLogging.Verbose($"Job button clicked for: {job}", tag);
-                return true;
-            }
-            else
-            {
-                guildLeve.SelectJob(job);
-
-                IceLogging.Verbose($"Still switching category for {job}", tag);
-                return false;
+                if (!vendorInfo.Leves.Contains(leve.LeveId))
+                    newLeves.Add(leve.LeveId);
             }
         }
-        bool throttleCount()
-        {
-            if (EzThrottler.Throttle("Counter throttle", 50))
-                _throttle += 1;
 
-            if (_throttle == 2)
-            {
-                _throttle = 0;
-                return true;
-            }
-
-            return false;
-        }
-
-        bool addLeveInfo(Job job)
-        {
-            if (guildLeve.CurrentJob != job)
-            {
-                guildLeve.SelectJob(job);
-
-                IceLogging.Verbose($"Waiting for {job}, currently {guildLeve.CurrentJob?.ToString() ?? "null"}", tag);
-                return false;
-            }
-
-            var handler = GetHandler();
-            if (handler == null)
-                return false;
-
-            var newLeves = GetVisibleLeves(handler);
-            if (newLeves.Count == 0)
-                return false;
-
-            IceLogging.Verbose($"Capturing leves for: {job}", tag);
-
-            foreach (var leve in newLeves)
-                if (_seenLeveIds.Add(leve.LeveId))
-                    _allLeves.Add(leve);
-
-            return true;
-        }
-
-        foreach (var job in ValidJobs)
-        {
-            P.taskManager.EnqueueMulti
-            (
-                new(() => correctJob(job), $"Selecting: {job}"),
-                new(() => throttleCount(), "Waiting a sec"),
-                new(() => addLeveInfo(job), $"Adding leve info for: {job}")
-            );
-        }
-    }
-    public static unsafe void LogHandlerState(GuildleveAssignmentEventHandler* handler)
-    {
-        const string tag = "Handler State";
-
-        IceLogging.Verbose($"CurrentLeveType: {handler->CurrentLeveType}", tag);
-        IceLogging.Verbose($"SelectedLeveId: {handler->SelectedLeveId}", tag);
-        IceLogging.Verbose($"SelectedGatheringLeveId: {handler->SelectedGatheringLeveId}", tag);
-        IceLogging.Verbose($"CategorySelection: [{string.Join(", ", handler->CategorySelection.ToArray())}]", tag);
-        IceLogging.Verbose($"ListLeveId: [{string.Join(", ", handler->ListLeveId.ToArray())}]", tag);
+        return string.Join(", ", newLeves);
     }
 }
