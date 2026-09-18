@@ -1125,17 +1125,17 @@ namespace ChilledLeves.Scheduler.Tasks
                 if (EzThrottler.Throttle("Waiting for navmesh to finish..."))
                     IceLogging.Verbose("Waiting for navmesh to finish currently, so we wait", tag);
             }
-            else if (currentDistance < 3.7f)
+            else if (currentDistance < 3.4f)
             {
                 IceLogging.Verbose("We don't need to move closer, so not gonna worry bout it", tag);
                 return true;
             }
             else
             {
-                IceLogging.Verbose("We're not close enough to the node somehow??? Minimum interaction range is 3.7 (as far as we can tell...)", tag);
+                IceLogging.Verbose("We're not close enough to the node somehow??? Minimum interaction range is 3.4 (as far as we can tell...)", tag);
                 IceLogging.Verbose("Telling navmesh to move closer with a hard stop distance", tag);
 
-                P.navmesh.PathfindAndMoveCloseTo(pos, Svc.Condition[ConditionFlag.Diving], 3.5f);
+                P.navmesh.PathfindAndMoveCloseTo(pos, Svc.Condition[ConditionFlag.Diving], 3.4f);
             }
 
             return false;
