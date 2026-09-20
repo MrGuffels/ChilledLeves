@@ -116,6 +116,7 @@ public sealed class ChilledLeves : IDalamudPlugin
         Config_Migrate.UpdateConfig();
         LeveInfo.PopulateLeveInfo();
         LeveInfo.UpdateLeves();
+        LeveInfo.Update_ARRGrind();
         RouteLoader.LoadAllRoutes();
         RouteLoader.LoadExternalRoutes();
         LeveInfo.UpdateSelectString();

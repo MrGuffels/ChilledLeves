@@ -22,7 +22,7 @@ public partial class Config
     public AssignmentType ARR_SelectedAssignment { get; set; } = AssignmentType.Fisher;
     public StopConditions ARR_StopCondition { get; set; } = StopConditions.Level;
     public uint ARR_StopLevel { get; set; } = 100;
-    public Dictionary<uint, List<uint>> Npc_LevePriority { get; set; } = new();
+    public Dictionary<uint, List<uint>> ARR_LevemetPriority { get; set; } = new();
 
     public void SaveNewPlaylist(string Name, string description)
     {

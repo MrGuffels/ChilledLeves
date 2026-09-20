@@ -211,18 +211,6 @@ namespace ChilledLeves.Scheduler.Tasks
             return false;
         }
         private static List<uint> ValidARRLeves = new();
-        private static bool UpdateARRLeves()
-        {
-            ValidARRLeves = new();
-            var list = C.Npc_LevePriority[C.ARR_NpcId];
-            foreach (var leve in list)
-            {
-                ValidARRLeves.Add(leve);
-            }
-
-            return true;
-        }
-
         public static bool Grab_ARRLeve()
         {
             string tag = "Task: Grab Leve";

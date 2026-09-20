@@ -75,7 +75,9 @@ namespace ChilledLeves.Ui.MainWindow_Tabs
 
                         ImGui.TableNextColumn();
                         ImGui.AlignTextToFramePadding();
-                        bool clicked = RowSelectable(npc.Value.Name, isSelected, rowHeight);
+                        var count = npc.Value.Leves.Count();
+
+                        bool clicked = RowSelectable($"{npc.Value.Name} [{count:N0}]", isSelected, rowHeight);
 
                         if (clicked)
                         {
