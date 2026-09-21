@@ -22,10 +22,10 @@ internal static class ExcelHelper
     internal static ExcelSheet<Level> Sheet_Level;
     internal static ExcelSheet<GatheringExp> Sheet_GatheringExp;
     internal static ExcelSheet<Mount> Sheet_Mount;
+    internal static ExcelSheet<Town> Sheet_Town;
 
     public static void Init()
     {
-        Svc.Data.GameData.Options.PanicOnSheetChecksumMismatch = false;
         Sheet_TerritoryType = Svc.Data.GetExcelSheet<TerritoryType>();
         Sheet_Leve = Svc.Data.GetExcelSheet<Leve>();
         Sheet_Recipe = Svc.Data.GetExcelSheet<Recipe>();
@@ -42,6 +42,8 @@ internal static class ExcelHelper
         Sheet_GatheringExp = Svc.Data.GetExcelSheet<GatheringExp>();
         Sheet_Mount = Svc.Data.GetExcelSheet<Mount>();
         Sheet_ENpcResident = Svc.Data.GetExcelSheet<ENpcResident>();
+        Sheet_Town = Svc.Data.GetExcelSheet<Town>();
+
     }
 
     public static string GetTerritoryName(uint territoryid)

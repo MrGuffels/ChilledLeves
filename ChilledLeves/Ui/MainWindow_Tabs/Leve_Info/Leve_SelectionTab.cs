@@ -1,4 +1,5 @@
 ﻿using ChilledLeves.Gui;
+using ChilledLeves.Resources;
 using ChilledLeves.Utilities;
 using ChilledLeves.Utilities.LeveData;
 using Dalamud.Interface.Utility;
@@ -98,6 +99,7 @@ namespace ChilledLeves.Ui.MainWindow_Tabs.Leve_Info
 
                     ImGui.TableNextColumn();
                     ImGui.AlignTextToFramePadding();
+                    Utils.ShowWarning(leveId.Key);
                     ImGui.Text($"{leveId.Value.LeveName}");
                 }
 
