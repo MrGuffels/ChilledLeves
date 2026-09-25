@@ -1,9 +1,6 @@
 ﻿using ChilledLeves.Utilities;
 using ChilledLeves.Utilities.LeveData;
 using ECommons.GameHelpers;
-using FFXIVClientStructs.FFXIV.Client.Game.UI;
-using System;
-using System.Collections.Generic;
 using System.Text;
 
 namespace ChilledLeves.Ui.DebugTabs

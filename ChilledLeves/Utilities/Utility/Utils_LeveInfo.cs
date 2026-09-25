@@ -1,4 +1,6 @@
 ﻿using ChilledLeves.Config_Files;
+using ChilledLeves.Gui;
+using ChilledLeves.Resources;
 using ChilledLeves.Utilities.LeveData;
 using ChilledLeves.Utilities.LogInfo;
 using ECommons.GameHelpers;
@@ -38,7 +40,7 @@ public static partial class Utils
     // 
     // Gathering (Min + Btn) work differently, the grab/turnin is from the same NPC
     // Grabbing it put it in a state of 1
-    // Failing puts it in a state of 3, but you can also retry said mission ifyou have the allowance for it (good for re-attempting)
+    // Failing puts it in a state of 3, but you can also retry said mission if you have the allowance for it (good for re-attempting)
     // Completing it puts it in a state of 255
 
 
@@ -211,6 +213,30 @@ public static partial class Utils
             }
 
             C.SaveDebounced();
+        }
+    }
+
+    public static void ShowWarning(uint leveId)
+    {
+        bool unsupported = false;
+
+        if (LeveInfo.Leve_SheetInfo.TryGetValue(leveId, out var sheetInfo))
+        {
+            if (sheetInfo.JobAssignmentType is Enums.AssignmentType.Miner or Enums.AssignmentType.Botanist)
+            {
+                var route = RouteLoader.GetRoute(leveId);
+                unsupported = route.NodeInfo.Count == 0 || route.AetheryteId == 0;
+            }
+        }
+        else
+        {
+            unsupported = true;
+        }
+
+        if (unsupported)
+        {
+            ImGui_Ice.IconWithTooltip(FontAwesomeIcon.ExclamationTriangle, "Not supported", false);
+            ImGui.SameLine();
         }
     }
 }

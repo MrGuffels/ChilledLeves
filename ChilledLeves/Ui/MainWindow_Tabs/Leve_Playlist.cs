@@ -134,6 +134,7 @@ namespace ChilledLeves.Ui.MainWindow_Tabs
 
                                 ImGui.TableNextColumn();
                                 ImGui.AlignTextToFramePadding();
+                                Utils.ShowWarning(leve);
                                 ImGui.Text($"{sheetInfo.LeveName}");
 
                                 ImGui.TableNextColumn();
@@ -311,6 +312,7 @@ namespace ChilledLeves.Ui.MainWindow_Tabs
 
                 ImGui.TableNextColumn();
                 ImGui.AlignTextToFramePadding();
+                Utils.ShowWarning(leveId);
                 ImGui.TextUnformatted(sheetInfo.LeveName);
 
                 ImGui.TableNextColumn();
